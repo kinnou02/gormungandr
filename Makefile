@@ -45,7 +45,7 @@ ci: lint test ## Run all the tests and code checks
 
 .PHONY: build
 build: ## Build a version
-	go build -v ./...
+	go build -v ./cmd/...
 
 .PHONY: clean
 clean: ## Remove temporary files

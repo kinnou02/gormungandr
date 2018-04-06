@@ -33,6 +33,18 @@
   name = "github.com/stretchr/testify"
   version = "1.2.1"
 
+[[constraint]]
+  branch = "master"
+  name = "github.com/gin-gonic/contrib"
+
+[[constraint]]
+  name = "github.com/gin-gonic/gin"
+  branch = "master"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/canaltp/gonavitia"
+
 [prune]
   go-tests = true
   unused-packages = true
