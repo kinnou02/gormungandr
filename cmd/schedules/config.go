@@ -15,6 +15,11 @@ func init() {
 	pflag.String("pprof-listen", "", "address to listen for pprof. format: \"IP:PORT\"")
 	pflag.Lookup("pprof-listen").NoOptDefVal = "localhost:6060"
 	pflag.Bool("json-log", false, "enable json logging")
+	pflag.String("connstr",
+		"host=localhost user=navitia password=navitia dbname=jormungandr sslmode=disable",
+		"connection string to the jormungandr database",
+	) //TODO add short option
+	pflag.Bool("skip-auth", false, "disable authentication")
 }
 
 type Config struct {
@@ -23,6 +28,8 @@ type Config struct {
 	Kraken      string
 	PprofListen string `mapstructure:"pprof-listen"`
 	JsonLog     bool   `mapstructure:"json-log"`
+	Constr      string
+	SkipAuth    bool `mapstructure:"skip-auth"`
 }
 
 func GetConfig() (Config, error) {
