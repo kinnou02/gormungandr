@@ -6,10 +6,11 @@ Implementation of jormungandr in go as multiple micro services
 Schedules
 --------
 `schedules` handle schedules apis (no kidding):
-    - /route_schedules (partial support)
-    - /stop_schedules (not implemented yet)
-    - /departures (not implemented yet)
-    - /arrivals (not implemented yet)
+
+ - /route_schedules (partial support)
+ - /stop_schedules (not implemented yet)
+ - /departures (not implemented yet)
+ - /arrivals (not implemented yet)
 
 How to build
 ============
