@@ -51,16 +51,20 @@ func init_log(logjson bool) {
 func main() {
 	listen := flag.String("listen", ":8080", "[IP]:PORT to listen")
 	timeout := flag.Duration("timeout", time.Second, "timeour for call to kraken")
-	kraken_addr := flag.String("kraken", "tcp://localhost:3000", "zmq addr for kraken")
+	krakenAddr := flag.String("kraken", "tcp://localhost:3000", "zmq addr for kraken")
+	pprofListen := flag.String("pprof-listen", "", "address to listen for pprof. format: \"IP:PORT\"")
 	logjson := flag.Bool("logjson", false, "enable json logging")
 	flag.Parse()
 	init_log(*logjson)
 
-	kraken := gormungandr.NewKraken("default", *kraken_addr, *timeout)
+	kraken := gormungandr.NewKraken("default", *krakenAddr, *timeout)
 
-	go func() {
-		logrus.Println(http.ListenAndServe("localhost:6060", nil))
-	}()
+	if len(*pprofListen) != 0 {
+		go func() {
+			logrus.Infof("pprof listening on %s", *pprofListen)
+			logrus.Error(http.ListenAndServe(*pprofListen, nil))
+		}()
+	}
 
 	r := setupRouter()
 	r.GET("/v1/coverage/:coverage/*filter", NoRouteHandler(kraken))
