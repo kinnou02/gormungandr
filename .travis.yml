@@ -1,0 +1,8 @@
+language: go
+go:
+    - "1.10"
+script:
+    - sudo apt install libzmq3-dev
+    - make setup
+    - make ci
+    - make
