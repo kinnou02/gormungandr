@@ -8,13 +8,14 @@
   revision = "3a771d992973f24aa725d07868b467d1ddfceafb"
 
 [[projects]]
-  branch = "master"
+  branch = "feedpublisher"
   name = "github.com/canaltp/gonavitia"
   packages = [
     ".",
     "pbnavitia"
   ]
-  revision = "c8f8552a261ded27f4c8f71e761b7b56368d3cab"
+  revision = "fdc8bdb7d9cb5f2c5fa38eb2eb5010b9f5f4323e"
+  source = "github.com/kinnou02/gonavitia"
 
 [[projects]]
   name = "github.com/davecgh/go-spew"
@@ -195,6 +196,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "b182de67de5394a0330e96fd6613361648a33d3b6edf5249890cf57a7483ebf7"
+  inputs-digest = "f336445ad9a414564b9957e0c1e255ea547201307cb63102b101392079f7ced8"
   solver-name = "gps-cdcl"
   solver-version = 1
