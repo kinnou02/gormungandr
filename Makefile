@@ -51,6 +51,10 @@ build: ## Build a version
 clean: ## Remove temporary files
 	go clean
 
+.PHONY: install
+install: ## install project and it's dependancies, useful for autocompletion feature
+	go install -i
+
 # Absolutely awesome: http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 .PHONY: help
 help:
