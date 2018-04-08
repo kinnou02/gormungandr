@@ -12,7 +12,7 @@ dep: ## Run dep ensure and prune
 
 .PHONY: test
 test: ## Run all the tests
-	echo 'mode: atomic' > coverage.txt && go test -covermode=atomic -coverprofile=coverage.txt -v -race -timeout=30s ./...
+	echo 'mode: atomic' > coverage.txt && go test -covermode=atomic -coverprofile=coverage.txt -race -timeout=30s ./...
 
 .PHONY: cover
 cover: test ## Run all the tests and opens the coverage report

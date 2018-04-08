@@ -148,3 +148,15 @@ func NewAddress(pb *pbnavitia.Address) *gonavitia.Address {
 	}
 	return &address
 }
+
+func NewFeedPublisher(pb *pbnavitia.FeedPublisher) *gonavitia.FeedPublisher {
+	if pb == nil {
+		return nil
+	}
+	return &gonavitia.FeedPublisher{
+		Name:    pb.Name,
+		Url:     pb.Url,
+		Id:      pb.Id,
+		License: pb.License,
+	}
+}

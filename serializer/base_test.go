@@ -38,3 +38,22 @@ func TestNewPagination(t *testing.T) {
 	assert.Equal(t, pagination.StartPage, int32(3))
 	assert.Equal(t, pagination.TotalResult, int32(4))
 }
+
+func TestNewFeedPublisherNil(t *testing.T) {
+	assert.Nil(t, NewFeedPublisher(nil))
+}
+
+func TestNewFeedPublisher(t *testing.T) {
+	pb := pbnavitia.FeedPublisher{
+		Id:      proto.String("id"),
+		Name:    proto.String("name"),
+		Url:     proto.String("url"),
+		License: proto.String("license"),
+	}
+	fp := NewFeedPublisher(&pb)
+	assert.NotNil(t, fp)
+	assert.Equal(t, "id", *fp.Id)
+	assert.Equal(t, "name", *fp.Name)
+	assert.Equal(t, "url", *fp.Url)
+	assert.Equal(t, "license", *fp.License)
+}

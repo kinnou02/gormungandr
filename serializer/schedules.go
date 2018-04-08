@@ -17,9 +17,13 @@ func NewRouteSchedulesResponse(pb *pbnavitia.Response) *gonavitia.RouteScheduleR
 		Error:          NewError(pb.Error),
 		RouteSchedules: make([]*gonavitia.RouteSchedule, 0),
 		Pagination:     NewPagination(pb.Pagination),
+		FeedPublishers: make([]*gonavitia.FeedPublisher, 0, len(pb.FeedPublishers)),
 	}
 	for _, r := range pb.RouteSchedules {
 		response.RouteSchedules = append(response.RouteSchedules, NewRouteSchedule(r))
+	}
+	for _, f := range pb.FeedPublishers {
+		response.FeedPublishers = append(response.FeedPublishers, NewFeedPublisher(f))
 	}
 	return &response
 }
