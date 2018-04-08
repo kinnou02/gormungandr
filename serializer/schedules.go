@@ -16,6 +16,7 @@ func NewRouteSchedulesResponse(pb *pbnavitia.Response) *gonavitia.RouteScheduleR
 	response := gonavitia.RouteScheduleResponse{
 		Error:          NewError(pb.Error),
 		RouteSchedules: make([]*gonavitia.RouteSchedule, 0),
+		Pagination:     NewPagination(pb.Pagination),
 	}
 	for _, r := range pb.RouteSchedules {
 		response.RouteSchedules = append(response.RouteSchedules, NewRouteSchedule(r))

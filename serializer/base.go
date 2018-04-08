@@ -18,6 +18,18 @@ func NewError(pb *pbnavitia.Error) *gonavitia.Error {
 	}
 }
 
+func NewPagination(pb *pbnavitia.Pagination) *gonavitia.Pagination {
+	if pb == nil {
+		return nil
+	}
+	return &gonavitia.Pagination{
+		StartPage:    pb.GetStartPage(),
+		ItemsOnPage:  pb.GetItemsOnPage(),
+		ItemsPerPage: pb.GetItemsPerPage(),
+		TotalResult:  pb.GetTotalResult(),
+	}
+}
+
 func NewCode(pb *pbnavitia.Code) *gonavitia.Code {
 	if pb == nil {
 		return nil
