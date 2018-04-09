@@ -2,6 +2,7 @@ package auth
 
 import (
 	"database/sql"
+	"flag"
 	"fmt"
 	"os"
 	"os/exec"
@@ -17,6 +18,7 @@ import (
 var dockerDB *sql.DB
 
 func TestMain(m *testing.M) {
+	flag.Parse() //required to get Short() from testing
 	if testing.Short() {
 		log.Warn("skipping test Docker in short mode.")
 		os.Exit(m.Run())
