@@ -42,7 +42,7 @@
   branch = "master"
 
 [[constraint]]
-  name = "github.com/canaltp/gonavitia"
+  name = "github.com/CanalTP/gonavitia"
   branch = "feedpublisher"
   source = "github.com/kinnou02/gonavitia"
 

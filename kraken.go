@@ -3,7 +3,7 @@ package gormungandr
 import (
 	"time"
 
-	"github.com/canaltp/gonavitia/pbnavitia"
+	"github.com/CanalTP/gonavitia/pbnavitia"
 	"github.com/golang/protobuf/proto"
 	zmq "github.com/pebbe/zmq4"
 	"github.com/pkg/errors"

@@ -3,8 +3,8 @@ package serializer
 import (
 	"strings"
 
-	"github.com/canaltp/gonavitia"
-	"github.com/canaltp/gonavitia/pbnavitia"
+	"github.com/CanalTP/gonavitia"
+	"github.com/CanalTP/gonavitia/pbnavitia"
 )
 
 func NewError(pb *pbnavitia.Error) *gonavitia.Error {

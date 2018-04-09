@@ -4,8 +4,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/canaltp/gonavitia"
-	"github.com/canaltp/gonavitia/pbnavitia"
+	"github.com/CanalTP/gonavitia"
+	"github.com/CanalTP/gonavitia/pbnavitia"
 )
 
 func NewDisruption(pb *pbnavitia.Impact) *gonavitia.Disruption {
