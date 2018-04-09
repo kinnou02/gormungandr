@@ -3,14 +3,15 @@ package auth
 import (
 	"database/sql"
 	"fmt"
-	_ "github.com/lib/pq"
-	log "github.com/sirupsen/logrus"
-	"github.com/stretchr/testify/assert"
-	"gopkg.in/ory-am/dockertest.v3"
 	"os"
 	"os/exec"
 	"testing"
 	"time"
+
+	_ "github.com/lib/pq"
+	log "github.com/sirupsen/logrus"
+	"github.com/stretchr/testify/assert"
+	"gopkg.in/ory-am/dockertest.v3"
 )
 
 var dockerDB *sql.DB
@@ -32,12 +33,12 @@ func TestMain(m *testing.M) {
 	conStr := ""
 	// exponential backoff-retry, because the application in the container might not be ready to accept connections yet
 	pool.MaxWait = 30 * time.Second
-	if err := pool.Retry(func() error {
-		var err error
+	if err = pool.Retry(func() error {
+		var errr error
 		conStr = fmt.Sprintf("user=jormun password=secret host=localhost port=%s dbname=jormun sslmode=disable", resource.GetPort("5432/tcp"))
-		dockerDB, err = sql.Open("postgres", conStr)
-		if err != nil {
-			return err
+		dockerDB, errr = sql.Open("postgres", conStr)
+		if errr != nil {
+			return errr
 		}
 		return dockerDB.Ping()
 	}); err != nil {
