@@ -10,6 +10,7 @@ import (
 	_ "net/http/pprof"
 
 	"github.com/CanalTP/gormungandr"
+	"github.com/CanalTP/gormungandr/auth"
 	_ "github.com/lib/pq"
 
 	"github.com/gin-contrib/cors"
@@ -78,7 +79,7 @@ func main() {
 	cov := r.Group("/v1/coverage/:coverage")
 
 	if config.SkipAuth {
-		cov.Use(gormungandr.AuthenticationMiddleware(db))
+		cov.Use(auth.AuthenticationMiddleware(db))
 	}
 
 	cov.GET("/*filter", NoRouteHandler(kraken))

@@ -1,4 +1,4 @@
-package gormungandr
+package auth
 
 import (
 	"net/http/httptest"
@@ -55,5 +55,51 @@ func TestGetTokenParams(t *testing.T) {
 
 	c.Request = httptest.NewRequest("Get", "/?key=mykeyé$€", nil)
 	assert.Equal(t, "mykeyé$€", getToken(c))
+}
 
+func TestMiddlewareNoToken(t *testing.T) {
+	c, _ := gin.CreateTestContext(httptest.NewRecorder())
+	c.Request = httptest.NewRequest("Get", "/coverage/fr-idf", nil)
+	db, _ := newMock()
+	defer db.Close()
+	middleware(c, db)
+	assert.True(t, c.IsAborted())
+}
+
+func TestMiddlewareAuthFail(t *testing.T) {
+	c, _ := gin.CreateTestContext(httptest.NewRecorder())
+	c.Request = httptest.NewRequest("Get", "/coverage/fr-idf", nil)
+	c.Request.SetBasicAuth("mykey", "")
+	db, mock := newMock()
+	defer db.Close()
+	mock = expectAuthNoResult(mock)
+	middleware(c, db)
+	assert.True(t, c.IsAborted())
+	assert.Nil(t, mock.ExpectationsWereMet())
+}
+
+func TestMiddlewareNotAuthorized(t *testing.T) {
+	c, _ := gin.CreateTestContext(httptest.NewRecorder())
+	c.Request = httptest.NewRequest("Get", "/coverage/fr-idf", nil)
+	c.Request.SetBasicAuth("mykey", "")
+	db, mock := newMock()
+	defer db.Close()
+	mock = expectAuthSuccess(mock)
+	mock = expectIsAuthorizeNoResult(mock)
+	middleware(c, db)
+	assert.True(t, c.IsAborted())
+	assert.Nil(t, mock.ExpectationsWereMet())
+}
+
+func TestMiddlewareAuthorized(t *testing.T) {
+	c, _ := gin.CreateTestContext(httptest.NewRecorder())
+	c.Request = httptest.NewRequest("Get", "/coverage/fr-idf", nil)
+	c.Request.SetBasicAuth("mykey", "")
+	db, mock := newMock()
+	defer db.Close()
+	mock = expectAuthSuccess(mock)
+	mock = expectIsAuthorizeSuccess(mock)
+	middleware(c, db)
+	assert.False(t, c.IsAborted())
+	assert.Nil(t, mock.ExpectationsWereMet())
 }
