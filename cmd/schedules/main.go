@@ -59,7 +59,7 @@ func main() {
 
 	kraken := gormungandr.NewKraken("default", config.Kraken, config.Timeout)
 
-	db, err := sql.Open("postgres", config.Constr)
+	db, err := sql.Open("postgres", config.ConnectionString)
 	if err != nil {
 		logrus.Fatal("connection to postgres failed: ", err)
 	}
