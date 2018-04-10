@@ -45,6 +45,10 @@
   name = "github.com/CanalTP/gonavitia"
   branch = "master"
 
+[[constraint]]
+  branch = "master"
+  name = "github.com/spf13/pflag"
+
 [prune]
   go-tests = true
   unused-packages = true
