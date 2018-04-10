@@ -4,8 +4,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/canaltp/gonavitia"
-	"github.com/canaltp/gonavitia/pbnavitia"
+	"github.com/CanalTP/gonavitia"
+	"github.com/CanalTP/gonavitia/pbnavitia"
 	"github.com/golang/protobuf/proto"
 )
 
@@ -15,10 +15,15 @@ func NewRouteSchedulesResponse(pb *pbnavitia.Response) *gonavitia.RouteScheduleR
 	}
 	response := gonavitia.RouteScheduleResponse{
 		Error:          NewError(pb.Error),
-		RouteSchedules: make([]*gonavitia.RouteSchedule, 0),
+		RouteSchedules: make([]*gonavitia.RouteSchedule, 0, len(pb.RouteSchedules)),
+		Pagination:     NewPagination(pb.Pagination),
+		FeedPublishers: make([]*gonavitia.FeedPublisher, 0, len(pb.FeedPublishers)),
 	}
 	for _, r := range pb.RouteSchedules {
 		response.RouteSchedules = append(response.RouteSchedules, NewRouteSchedule(r))
+	}
+	for _, f := range pb.FeedPublishers {
+		response.FeedPublishers = append(response.FeedPublishers, NewFeedPublisher(f))
 	}
 	return &response
 }

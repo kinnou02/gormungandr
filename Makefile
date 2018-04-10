@@ -12,7 +12,7 @@ dep: ## Run dep ensure and prune
 
 .PHONY: test
 test: ## Run all the tests
-	echo 'mode: atomic' > coverage.txt && go test -covermode=atomic -coverprofile=coverage.txt -v -race -timeout=30s ./...
+	echo 'mode: atomic' > coverage.txt && go test -covermode=atomic -coverprofile=coverage.txt -race -timeout=30s ./...
 
 .PHONY: cover
 cover: test ## Run all the tests and opens the coverage report
@@ -50,6 +50,10 @@ build: ## Build a version
 .PHONY: clean
 clean: ## Remove temporary files
 	go clean
+
+.PHONY: install
+install: ## install project and it's dependancies, useful for autocompletion feature
+	go install -i
 
 # Absolutely awesome: http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 .PHONY: help

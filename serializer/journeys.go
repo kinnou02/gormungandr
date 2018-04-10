@@ -1,7 +1,7 @@
 package serializer
 
-import "github.com/canaltp/gonavitia"
-import "github.com/canaltp/gonavitia/pbnavitia"
+import "github.com/CanalTP/gonavitia"
+import "github.com/CanalTP/gonavitia/pbnavitia"
 import "time"
 import "strings"
 import "github.com/golang/protobuf/proto"

@@ -5,9 +5,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/canaltp/gonavitia/pbnavitia"
-	"github.com/canaltp/gormungandr"
-	"github.com/canaltp/gormungandr/serializer"
+	"github.com/CanalTP/gonavitia/pbnavitia"
+	"github.com/CanalTP/gormungandr"
+	"github.com/CanalTP/gormungandr/serializer"
 	"github.com/gin-gonic/gin"
 	"github.com/golang/protobuf/proto"
 	log "github.com/sirupsen/logrus"

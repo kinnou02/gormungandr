@@ -3,8 +3,8 @@ package serializer
 import (
 	"strings"
 
-	"github.com/canaltp/gonavitia"
-	"github.com/canaltp/gonavitia/pbnavitia"
+	"github.com/CanalTP/gonavitia"
+	"github.com/CanalTP/gonavitia/pbnavitia"
 )
 
 func NewError(pb *pbnavitia.Error) *gonavitia.Error {
@@ -15,6 +15,18 @@ func NewError(pb *pbnavitia.Error) *gonavitia.Error {
 	return &gonavitia.Error{
 		Id:      &id,
 		Message: pb.Message,
+	}
+}
+
+func NewPagination(pb *pbnavitia.Pagination) *gonavitia.Pagination {
+	if pb == nil {
+		return nil
+	}
+	return &gonavitia.Pagination{
+		StartPage:    pb.GetStartPage(),
+		ItemsOnPage:  pb.GetItemsOnPage(),
+		ItemsPerPage: pb.GetItemsPerPage(),
+		TotalResult:  pb.GetTotalResult(),
 	}
 }
 
@@ -135,4 +147,16 @@ func NewAddress(pb *pbnavitia.Address) *gonavitia.Address {
 		address.Admins = append(address.Admins, NewAdmin(pb_admin))
 	}
 	return &address
+}
+
+func NewFeedPublisher(pb *pbnavitia.FeedPublisher) *gonavitia.FeedPublisher {
+	if pb == nil {
+		return nil
+	}
+	return &gonavitia.FeedPublisher{
+		Name:    pb.Name,
+		Url:     pb.Url,
+		Id:      pb.Id,
+		License: pb.License,
+	}
 }

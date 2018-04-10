@@ -3,18 +3,18 @@
 
 [[projects]]
   branch = "master"
-  name = "github.com/beorn7/perks"
-  packages = ["quantile"]
-  revision = "3a771d992973f24aa725d07868b467d1ddfceafb"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/canaltp/gonavitia"
+  name = "github.com/CanalTP/gonavitia"
   packages = [
     ".",
     "pbnavitia"
   ]
-  revision = "c8f8552a261ded27f4c8f71e761b7b56368d3cab"
+  revision = "b56077ce2fb86fe30d069a04ff09c28e6db6d8b4"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/beorn7/perks"
+  packages = ["quantile"]
+  revision = "3a771d992973f24aa725d07868b467d1ddfceafb"
 
 [[projects]]
   name = "github.com/davecgh/go-spew"
@@ -195,6 +195,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "b182de67de5394a0330e96fd6613361648a33d3b6edf5249890cf57a7483ebf7"
+  inputs-digest = "f0075729ec573b43997ce65e3c3c74e8921320174171999193a7c36a87883c1e"
   solver-name = "gps-cdcl"
   solver-version = 1

@@ -3,7 +3,7 @@ package serializer
 import (
 	"testing"
 
-	"github.com/canaltp/gonavitia/pbnavitia"
+	"github.com/CanalTP/gonavitia/pbnavitia"
 	"github.com/golang/protobuf/proto"
 	"github.com/stretchr/testify/assert"
 )

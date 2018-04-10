@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 
-	"github.com/canaltp/gormungandr"
+	"github.com/CanalTP/gormungandr"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )

@@ -42,8 +42,8 @@
   branch = "master"
 
 [[constraint]]
+  name = "github.com/CanalTP/gonavitia"
   branch = "master"
-  name = "github.com/canaltp/gonavitia"
 
 [prune]
   go-tests = true
