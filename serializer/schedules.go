@@ -15,7 +15,7 @@ func NewRouteSchedulesResponse(pb *pbnavitia.Response) *gonavitia.RouteScheduleR
 	}
 	response := gonavitia.RouteScheduleResponse{
 		Error:          NewError(pb.Error),
-		RouteSchedules: make([]*gonavitia.RouteSchedule, 0),
+		RouteSchedules: make([]*gonavitia.RouteSchedule, 0, len(pb.RouteSchedules)),
 		Pagination:     NewPagination(pb.Pagination),
 		FeedPublishers: make([]*gonavitia.FeedPublisher, 0, len(pb.FeedPublishers)),
 	}
