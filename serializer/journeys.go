@@ -65,13 +65,10 @@ func NewSection(pb *pbnavitia.Section) *gonavitia.Section {
 		GeoJson:           NewGeoJson(pb),
 		Mode:              mode,
 		TransferType:      transferType,
-		DisplayInfo:       NewPtDisplayInfo(pb.PtDisplayInformations),
+		DisplayInfo:       NewPtDisplayInfoForVJ(pb.PtDisplayInformations),
 		Co2Emission:       NewCo2Emission(pb.Co2Emission),
-		AdditionalInfo:    make([]string, 0),
+		AdditionalInfo:    NewAdditionalInformations(pb.AdditionalInformations),
 		Links:             NewLinksFromUris(pb.PtDisplayInformations),
-	}
-	for _, info := range pb.GetAdditionalInformations() {
-		section.AdditionalInfo = append(section.AdditionalInfo, strings.ToLower(info.String()))
 	}
 
 	return &section
@@ -102,27 +99,6 @@ func NewDistances(pb *pbnavitia.Distances) *gonavitia.Distances {
 		Ridesharing: pb.GetRidesharing(),
 	}
 	return &distances
-}
-
-func NewPtDisplayInfo(pb *pbnavitia.PtDisplayInfo) *gonavitia.PtDisplayInfo {
-	if pb == nil {
-		return nil
-	}
-	info := gonavitia.PtDisplayInfo{
-		Direction:      pb.Direction,
-		Code:           pb.Code,
-		Network:        pb.Network,
-		Color:          pb.Color,
-		Name:           pb.Name,
-		PhysicalMode:   pb.PhysicalMode,
-		Headsign:       pb.Headsign,
-		TextColor:      pb.TextColor,
-		CommercialMode: pb.CommercialMode,
-		Description:    pb.Description,
-		Links:          make([]gonavitia.Link, 0),
-	}
-	return &info
-
 }
 
 func NewCo2Emission(pb *pbnavitia.Co2Emission) *gonavitia.Amount {
