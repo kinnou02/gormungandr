@@ -43,8 +43,7 @@
 
 [[constraint]]
   name = "github.com/CanalTP/gonavitia"
-  branch = "feedpublisher"
-  source = "github.com/kinnou02/gonavitia"
+  branch = "master"
 
 [prune]
   go-tests = true
