@@ -14,6 +14,10 @@ dep: ## Run dep ensure and prune
 test: ## Run all the tests
 	echo 'mode: atomic' > coverage.txt && go test -covermode=atomic -coverprofile=coverage.txt -race -timeout=30s ./...
 
+.PHONY: fasttest
+fasttest: ## Run short tests
+	echo 'mode: atomic' > coverage.txt && go test -short -covermode=atomic -coverprofile=coverage.txt -race -timeout=30s ./...
+
 .PHONY: cover
 cover: test ## Run all the tests and opens the coverage report
 	go tool cover -html=coverage.txt
@@ -45,7 +49,7 @@ ci: lint test ## Run all the tests and code checks
 
 .PHONY: build
 build: ## Build a version
-	go build -v ./cmd/...
+	go build  -tags=jsoniter -v ./cmd/...
 
 .PHONY: clean
 clean: ## Remove temporary files

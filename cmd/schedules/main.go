@@ -5,9 +5,14 @@ import (
 	"os"
 	"time"
 
+	"database/sql"
+
 	_ "net/http/pprof"
 
 	"github.com/CanalTP/gormungandr"
+	"github.com/CanalTP/gormungandr/auth"
+	_ "github.com/lib/pq"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/contrib/ginrus"
 	"github.com/gin-gonic/gin"
@@ -43,7 +48,6 @@ func init_log(jsonLog bool) {
 }
 
 func main() {
-
 	config, err := GetConfig()
 	if err != nil {
 		logrus.Fatalf("failure to load configuration: %+v", err)
@@ -55,6 +59,15 @@ func main() {
 
 	kraken := gormungandr.NewKraken("default", config.Kraken, config.Timeout)
 
+	db, err := sql.Open("postgres", config.ConnectionString)
+	if err != nil {
+		logrus.Fatal("connection to postgres failed: ", err)
+	}
+	err = db.Ping()
+	if err != nil {
+		logrus.Fatal("connection to postgres failed: ", err)
+	}
+
 	if len(config.PprofListen) != 0 {
 		go func() {
 			logrus.Infof("pprof listening on %s", config.PprofListen)
@@ -63,8 +76,13 @@ func main() {
 	}
 
 	r := setupRouter()
-	r.GET("/v1/coverage/:coverage/*filter", NoRouteHandler(kraken))
+	cov := r.Group("/v1/coverage/:coverage")
 
+	if !config.SkipAuth {
+		cov.Use(auth.AuthenticationMiddleware(db))
+	}
+
+	cov.GET("/*filter", NoRouteHandler(kraken))
 	err = r.Run(config.Listen)
 	if err != nil {
 		logrus.Errorf("failure to start: %+v", err)
