@@ -60,10 +60,11 @@ func TestGetTokenParams(t *testing.T) {
 func TestMiddlewareNoToken(t *testing.T) {
 	c, _ := gin.CreateTestContext(httptest.NewRecorder())
 	c.Request = httptest.NewRequest("Get", "/coverage/fr-idf", nil)
-	db, _ := newMock()
+	db, mock := newMock()
 	defer db.Close()
 	middleware(c, db)
 	assert.True(t, c.IsAborted())
+	assert.Nil(t, mock.ExpectationsWereMet())
 }
 
 func TestMiddlewareAuthFail(t *testing.T) {
