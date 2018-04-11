@@ -78,7 +78,7 @@ func main() {
 	r := setupRouter()
 	cov := r.Group("/v1/coverage/:coverage")
 
-	if config.SkipAuth {
+	if !config.SkipAuth {
 		cov.Use(auth.AuthenticationMiddleware(db))
 	}
 
