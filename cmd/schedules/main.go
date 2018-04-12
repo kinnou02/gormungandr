@@ -19,12 +19,14 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/contrib/ginrus"
 	"github.com/gin-gonic/gin"
+	"github.com/newrelic/go-agent"
+	"github.com/newrelic/go-agent/_integrations/nrgin/v1"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
 )
 
-func setupRouter() *gin.Engine {
+func setupRouter(config schedules.Config) *gin.Engine {
 	r := gin.New()
 	// Recovery middleware recovers from any panics and writes a 500 if there was one.
 	r.Use(gin.Recovery())
@@ -36,6 +38,15 @@ func setupRouter() *gin.Engine {
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
 	}))
+
+	if len(config.NewRelicLicense) > 0 {
+		nrConfig := newrelic.NewConfig(config.NewRelicAppName, config.NewRelicLicense)
+		app, err := newrelic.NewApplication(nrConfig)
+		if err != nil {
+			panic(err)
+		}
+		r.Use(nrgin.Middleware(app))
+	}
 
 	r.GET("/metrics", gin.WrapH(promhttp.Handler()))
 
@@ -74,7 +85,7 @@ func main() {
 	logger.Info("starting schedules")
 
 	kraken := gormungandr.NewKraken("default", config.Kraken, config.Timeout)
-	r := setupRouter()
+	r := setupRouter(config)
 	cov := r.Group("/v1/coverage/:coverage")
 
 	if !config.SkipAuth {
