@@ -1,3 +1,5 @@
+VERSION := $(shell git describe --tag --always)
+
 .PHONY: setup
 setup: ## Install all the build and lint dependencies
 	go get -u github.com/alecthomas/gometalinter
@@ -49,7 +51,7 @@ ci: lint test ## Run all the tests and code checks
 
 .PHONY: build
 build: ## Build a version
-	go build  -tags=jsoniter -v ./cmd/...
+	go build -ldflags "-X github.com/CanalTP/gormungandr.Version=$(VERSION)" -tags=jsoniter -v ./cmd/...
 
 .PHONY: clean
 clean: ## Remove temporary files
