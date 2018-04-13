@@ -1,6 +1,7 @@
 package gormungandr
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/CanalTP/gonavitia/pbnavitia"
@@ -11,9 +12,19 @@ import (
 	"github.com/sony/gobreaker"
 )
 
-var (
-	KrakenTimeout = errors.New("kraken timeout")
-)
+type KrakenTimeout struct {
+	message string
+}
+
+func NewKrakenTimeout(message string) *KrakenTimeout {
+	return &KrakenTimeout{
+		message: message,
+	}
+}
+
+func (e *KrakenTimeout) Error() string {
+	return e.message
+}
 
 type Kraken struct {
 	Name    string
@@ -38,9 +49,11 @@ func NewKraken(name, addr string, timeout time.Duration) *Kraken {
 
 func (k *Kraken) Call(request *pbnavitia.Request) (*pbnavitia.Response, error) {
 	rep, err := k.cb.Execute(func() (interface{}, error) {
-		requester, _ := zmq.NewSocket(zmq.REQ)
-		err := requester.Connect(k.Addr)
+		requester, err := zmq.NewSocket(zmq.REQ)
 		if err != nil {
+			return nil, errors.Wrap(err, "error while creating ZMQ socket")
+		}
+		if err = requester.Connect(k.Addr); err != nil {
 			return nil, errors.Wrap(err, "error while connecting")
 		}
 		defer func() {
@@ -48,9 +61,11 @@ func (k *Kraken) Call(request *pbnavitia.Request) (*pbnavitia.Response, error) {
 				logrus.Warnf("error while closing the socket %s", err)
 			}
 		}()
-		data, _ := proto.Marshal(request)
-		_, err = requester.Send(string(data), 0)
+		data, err := proto.Marshal(request)
 		if err != nil {
+			return nil, errors.Wrap(err, "error while marshalling")
+		}
+		if _, err = requester.Send(string(data), 0); err != nil {
 			return nil, errors.Wrap(err, "error while sending")
 		}
 		poller := zmq.NewPoller()
@@ -60,11 +75,17 @@ func (k *Kraken) Call(request *pbnavitia.Request) (*pbnavitia.Response, error) {
 			return nil, errors.Wrap(err, "error during polling")
 		}
 		if len(p) < 1 {
-			return nil, errors.Errorf("kraken %s timeout", k.Name)
+			return nil, NewKrakenTimeout(fmt.Sprintf("kraken %s timeout", k.Name))
 		}
-		rawResp, _ := p[0].Socket.Recv(0)
+		rawResp, err := p[0].Socket.Recv(0)
+		if err != nil {
+			return nil, errors.Wrap(err, "error while receiving response")
+		}
 		resp := &pbnavitia.Response{}
-		_ = proto.Unmarshal([]byte(rawResp), resp)
+		if err = proto.Unmarshal([]byte(rawResp), resp); err != nil {
+			return nil, errors.Wrap(err, "error while unmarshalling response")
+		}
+
 		return resp, nil
 	})
 	if err != nil {

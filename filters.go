@@ -19,7 +19,7 @@ func protect(id string) string {
 func convertToFilter(collection, value string) (string, error) {
 	typ, found := collectionToType[collection]
 	if !found {
-		return "", errors.New(fmt.Sprintf("Type %s Unkwown", collection))
+		return "", fmt.Errorf("Type %s Unkwown", collection)
 	}
 	if typ == "coord" {
 		return "", errors.New("coord aren't implemented yet")
