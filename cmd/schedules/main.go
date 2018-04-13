@@ -77,17 +77,17 @@ func main() {
 
 	db, err := sql.Open("postgres", config.ConnectionString)
 	if err != nil {
-		logrus.Fatal("connection to postgres failed: ", err)
+		logger.Fatal("connection to postgres failed: ", err)
 	}
 	err = db.Ping()
 	if err != nil {
-		logrus.Fatal("connection to postgres failed: ", err)
+		logger.Fatal("connection to postgres failed: ", err)
 	}
 
 	if len(config.PprofListen) != 0 {
 		go func() {
 			logrus.Infof("pprof listening on %s", config.PprofListen)
-			logrus.Error(http.ListenAndServe(config.PprofListen, nil))
+			logger.Error(http.ListenAndServe(config.PprofListen, nil))
 		}()
 	}
 
@@ -101,6 +101,6 @@ func main() {
 	cov.GET("/*filter", schedules.NoRouteHandler(kraken))
 	err = r.Run(config.Listen)
 	if err != nil {
-		logrus.Errorf("failure to start: %+v", err)
+		logger.Errorf("failure to start: %+v", err)
 	}
 }
