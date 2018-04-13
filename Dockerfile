@@ -6,6 +6,7 @@ RUN make build
 
 FROM alpine:latest
 RUN apk --no-cache add libzmq
+USER daemon:daemon
 WORKDIR /
 COPY --from=builder /go/src/github.com/CanalTP/gormungandr/schedules .
 CMD ["./schedules"]
