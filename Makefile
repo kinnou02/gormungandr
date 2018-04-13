@@ -61,6 +61,14 @@ clean: ## Remove temporary files
 install: ## install project and it's dependancies, useful for autocompletion feature
 	go install -i
 
+.PHONY: docker
+docker: ## build docker image
+	docker build -t navitia/schedules:$(VERSION) .
+
+.PHONY: version
+version: ## display version of gormungandr
+	@echo $(VERSION)
+
 # Absolutely awesome: http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 .PHONY: help
 help:
