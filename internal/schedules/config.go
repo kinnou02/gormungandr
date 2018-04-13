@@ -27,7 +27,7 @@ type Config struct {
 	Timeout          time.Duration
 	Kraken           string
 	PprofListen      string `mapstructure:"pprof-listen"`
-	JsonLog          bool   `mapstructure:"json-log"`
+	JSONLog          bool   `mapstructure:"json-log"`
 	ConnectionString string `mapstructure:"connection-string"`
 	SkipAuth         bool   `mapstructure:"skip-auth"`
 }

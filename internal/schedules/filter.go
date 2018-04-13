@@ -15,7 +15,7 @@ func NoRouteHandler(kraken *gormungandr.Kraken) gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err})
 		}
 
-		if filter.Api == "route_schedules" {
+		if filter.API == "route_schedules" {
 			request := NewRouteScheduleRequest()
 			if err := c.ShouldBindQuery(&request); err != nil {
 				logrus.Debugf("%+v\n", err)
@@ -26,7 +26,7 @@ func NoRouteHandler(kraken *gormungandr.Kraken) gin.HandlerFunc {
 			request.Filters = append(request.Filters, filter.Filters...)
 			RouteSchedule(c, kraken, &request)
 		} else {
-			c.JSON(http.StatusNotFound, gin.H{"error": "api not found"})
+			c.JSON(http.StatusNotFound, gin.H{"error": "API not found"})
 
 		}
 	}

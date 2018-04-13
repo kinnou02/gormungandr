@@ -40,8 +40,8 @@ func NewRouteScheduleRequest() RouteScheduleRequest {
 }
 
 func RouteSchedule(c *gin.Context, kraken *gormungandr.Kraken, request *RouteScheduleRequest) {
-	pb_req := BuildRequestRouteSchedule(*request)
-	resp, err := kraken.Call(pb_req)
+	pbReq := BuildRequestRouteSchedule(*request)
+	resp, err := kraken.Call(pbReq)
 	if err != nil {
 		log.Errorf("Error while calling kraken: %+v\n", err)
 		c.JSON(http.StatusServiceUnavailable, gin.H{"error": err})
@@ -54,7 +54,7 @@ func RouteSchedule(c *gin.Context, kraken *gormungandr.Kraken, request *RouteSch
 func BuildRequestRouteSchedule(req RouteScheduleRequest) *pbnavitia.Request {
 	departureFilter := strings.Join(req.Filters, "and ")
 	//TODO handle Realtime level from request
-	pb_req := &pbnavitia.Request{
+	pbReq := &pbnavitia.Request{
 		RequestedApi: pbnavitia.API_ROUTE_SCHEDULES.Enum(),
 		NextStopTimes: &pbnavitia.NextStopTimeRequest{
 			DepartureFilter:  proto.String(departureFilter),
@@ -71,7 +71,7 @@ func BuildRequestRouteSchedule(req RouteScheduleRequest) *pbnavitia.Request {
 		},
 		XCurrentDatetime: proto.Uint64(uint64(req.CurrentDatetime.Unix())),
 	}
-	pb_req.NextStopTimes.ForbiddenUri = append(pb_req.NextStopTimes.ForbiddenUri, req.ForbiddenUris...)
+	pbReq.NextStopTimes.ForbiddenUri = append(pbReq.NextStopTimes.ForbiddenUri, req.ForbiddenUris...)
 
-	return pb_req
+	return pbReq
 }

@@ -39,7 +39,7 @@ func setupRouter() *gin.Engine {
 	return r
 }
 
-func init_log(jsonLog bool) {
+func initLog(jsonLog bool) {
 	if jsonLog {
 		// Log as JSON instead of the default ASCII formatter.
 		logrus.SetFormatter(&logrus.JSONFormatter{})
@@ -53,7 +53,7 @@ func main() {
 	if err != nil {
 		logrus.Fatalf("failure to load configuration: %+v", err)
 	}
-	init_log(config.JsonLog)
+	initLog(config.JSONLog)
 	logrus.WithFields(logrus.Fields{
 		"config": config,
 	}).Debug("configuration loaded")

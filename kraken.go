@@ -62,9 +62,9 @@ func (k *Kraken) Call(request *pbnavitia.Request) (*pbnavitia.Response, error) {
 		if len(p) < 1 {
 			return nil, errors.Errorf("kraken %s timeout", k.Name)
 		}
-		raw_resp, _ := p[0].Socket.Recv(0)
+		rawResp, _ := p[0].Socket.Recv(0)
 		resp := &pbnavitia.Response{}
-		_ = proto.Unmarshal([]byte(raw_resp), resp)
+		_ = proto.Unmarshal([]byte(rawResp), resp)
 		return resp, nil
 	})
 	if err != nil {
