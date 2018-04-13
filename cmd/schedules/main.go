@@ -11,6 +11,7 @@ import (
 
 	"github.com/CanalTP/gormungandr"
 	"github.com/CanalTP/gormungandr/auth"
+	"github.com/CanalTP/gormungandr/internal/schedules"
 	_ "github.com/lib/pq"
 
 	"github.com/gin-contrib/cors"
@@ -48,7 +49,7 @@ func init_log(jsonLog bool) {
 }
 
 func main() {
-	config, err := GetConfig()
+	config, err := schedules.GetConfig()
 	if err != nil {
 		logrus.Fatalf("failure to load configuration: %+v", err)
 	}
@@ -82,7 +83,7 @@ func main() {
 		cov.Use(auth.AuthenticationMiddleware(db))
 	}
 
-	cov.GET("/*filter", NoRouteHandler(kraken))
+	cov.GET("/*filter", schedules.NoRouteHandler(kraken))
 	err = r.Run(config.Listen)
 	if err != nil {
 		logrus.Errorf("failure to start: %+v", err)
