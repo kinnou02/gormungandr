@@ -7,9 +7,9 @@ import (
 	"github.com/pkg/errors"
 )
 
-type FilterUri struct {
+type FilterURI struct {
 	Filters []string
-	Api     string
+	API     string
 }
 
 func protect(id string) string {
@@ -19,7 +19,7 @@ func protect(id string) string {
 func convertToFilter(collection, value string) (string, error) {
 	typ, found := collectionToType[collection]
 	if !found {
-		return "", errors.New(fmt.Sprintf("Type %s Unkwown", collection))
+		return "", fmt.Errorf("Type %s Unkwown", collection)
 	}
 	if typ == "coord" {
 		return "", errors.New("coord aren't implemented yet")
@@ -27,23 +27,23 @@ func convertToFilter(collection, value string) (string, error) {
 	return fmt.Sprintf("%s.uri=%s", typ, protect(value)), nil
 }
 
-func ParsePath(path string) (FilterUri, error) {
+func ParsePath(path string) (FilterURI, error) {
 	path = strings.Trim(path, "/")
 	if len(path) < 1 {
-		return FilterUri{}, errors.New("path is empty")
+		return FilterURI{}, errors.New("path is empty")
 	}
 	paths := strings.Split(path, "/")
 	var typ string
-	var result FilterUri
-	//TODO reverse to get the api first, it's mandatory for some case like coord
+	var result FilterURI
+	//TODO reverse to get the API first, it's mandatory for some case like coord
 	for i, v := range paths {
 		if i%2 == 0 {
 			typ = v
-			result.Api = v
+			result.API = v
 		} else {
 			f, err := convertToFilter(typ, v)
 			if err != nil {
-				return FilterUri{}, err
+				return FilterURI{}, err
 			}
 			result.Filters = append(result.Filters, f)
 		}
