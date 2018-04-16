@@ -18,8 +18,8 @@ var (
 	AuthenticationFailed = errors.New("Authentication failed")
 )
 
+//return AuthenticationFailed if the the authentication fail
 func Authenticate(token string, now time.Time, db *sql.DB) (User, error) {
-	//return AuthenticationFailed if the the authentication fail
 	var user User
 	row := db.QueryRow(authenticationQuery, token, now)
 	err := row.Scan(&user.Id, &user.Username, &user.AppName, &user.Type)

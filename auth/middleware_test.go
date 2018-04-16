@@ -65,6 +65,10 @@ func TestMiddlewareNoToken(t *testing.T) {
 	middleware(c, db)
 	assert.True(t, c.IsAborted())
 	assert.Nil(t, mock.ExpectationsWereMet())
+	_, ok := GetUser(c)
+	assert.False(t, ok)
+	_, ok = GetCoverage(c)
+	assert.False(t, ok)
 }
 
 func TestMiddlewareAuthFail(t *testing.T) {
@@ -77,6 +81,10 @@ func TestMiddlewareAuthFail(t *testing.T) {
 	middleware(c, db)
 	assert.True(t, c.IsAborted())
 	assert.Nil(t, mock.ExpectationsWereMet())
+	_, ok := GetUser(c)
+	assert.False(t, ok)
+	_, ok = GetCoverage(c)
+	assert.False(t, ok)
 }
 
 func TestMiddlewareNotAuthorized(t *testing.T) {
@@ -90,6 +98,10 @@ func TestMiddlewareNotAuthorized(t *testing.T) {
 	middleware(c, db)
 	assert.True(t, c.IsAborted())
 	assert.Nil(t, mock.ExpectationsWereMet())
+	_, ok := GetUser(c)
+	assert.False(t, ok)
+	_, ok = GetCoverage(c)
+	assert.False(t, ok)
 }
 
 func TestMiddlewareAuthorized(t *testing.T) {
@@ -103,4 +115,11 @@ func TestMiddlewareAuthorized(t *testing.T) {
 	middleware(c, db)
 	assert.False(t, c.IsAborted())
 	assert.Nil(t, mock.ExpectationsWereMet())
+	user, ok := GetUser(c)
+	assert.True(t, ok)
+	assert.Equal(t, "mylogin", user.Username)
+
+	coverage, ok := GetCoverage(c)
+	assert.True(t, ok)
+	assert.Equal(t, "", coverage) //no router is defined so the coverage from the query isn't parsed
 }
