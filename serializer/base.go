@@ -69,6 +69,7 @@ func NewAdmin(pb *pbnavitia.AdministrativeRegion) *gonavitia.Admin {
 		Coord:   NewCoord(pb.Coord),
 		Insee:   pb.Insee,
 		ZipCode: pb.ZipCode,
+		Level:   pb.GetLevel(),
 	}
 	return &admin
 }
@@ -89,13 +90,15 @@ func NewStopPoint(pb *pbnavitia.StopPoint) *gonavitia.StopPoint {
 		return nil
 	}
 	sp := gonavitia.StopPoint{
-		Id:       pb.Uri,
-		Name:     pb.Name,
-		Label:    pb.Label,
-		Coord:    NewCoord(pb.Coord),
-		Admins:   make([]*gonavitia.Admin, len(pb.AdministrativeRegions)),
-		StopArea: NewStopArea(pb.StopArea),
-		Codes:    make([]*gonavitia.Code, 0, len(pb.Codes)),
+		Id:         pb.Uri,
+		Name:       pb.Name,
+		Label:      pb.Label,
+		Coord:      NewCoord(pb.Coord),
+		Admins:     make([]*gonavitia.Admin, 0, len(pb.AdministrativeRegions)),
+		StopArea:   NewStopArea(pb.StopArea),
+		Codes:      make([]*gonavitia.Code, 0, len(pb.Codes)),
+		Equipments: NewEquipments(pb.HasEquipments),
+		Links:      make([]*gonavitia.Link, 0),
 	}
 	for _, pb_admin := range pb.AdministrativeRegions {
 		sp.Admins = append(sp.Admins, NewAdmin(pb_admin))
@@ -118,6 +121,7 @@ func NewStopArea(pb *pbnavitia.StopArea) *gonavitia.StopArea {
 		Coord:    NewCoord(pb.Coord),
 		Admins:   make([]*gonavitia.Admin, 0, len(pb.AdministrativeRegions)),
 		Codes:    make([]*gonavitia.Code, 0, len(pb.Codes)),
+		Links:    make([]*gonavitia.Link, 0),
 	}
 	for _, pb_admin := range pb.AdministrativeRegions {
 		sa.Admins = append(sa.Admins, NewAdmin(pb_admin))

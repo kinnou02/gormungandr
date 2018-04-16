@@ -17,7 +17,7 @@
     ".",
     "pbnavitia"
   ]
-  revision = "b56077ce2fb86fe30d069a04ff09c28e6db6d8b4"
+  revision = "87cbdc6e972a6bfcafdc910e1e238f3d03484c51"
 
 [[projects]]
   name = "github.com/Microsoft/go-winio"

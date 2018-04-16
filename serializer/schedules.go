@@ -39,7 +39,7 @@ func NewRouteSchedule(pb *pbnavitia.RouteSchedule) *gonavitia.RouteSchedule {
 		additionalInfo = &tmp
 	}
 	return &gonavitia.RouteSchedule{
-		DisplayInfo:    NewPtDisplayInfo(pb.PtDisplayInformations),
+		DisplayInfo:    NewPtDisplayInfoForRoute(pb.PtDisplayInformations),
 		Table:          NewTable(pb.Table),
 		AdditionalInfo: additionalInfo,
 		GeoJson:        NewGeoJsonMultistring(pb.Geojson),
@@ -68,11 +68,12 @@ func NewHeader(pb *pbnavitia.Header) *gonavitia.Header {
 	if pb == nil {
 		return nil
 	}
-	return &gonavitia.Header{
-		DisplayInfo: NewPtDisplayInfo(pb.PtDisplayInformations),
-		Links:       NewLinksFromUris(pb.PtDisplayInformations),
-		//AdditionalInfo []string       `json:"additional_informations"`
+	header := gonavitia.Header{
+		DisplayInfo:     NewPtDisplayInfoForVJ(pb.PtDisplayInformations),
+		Links:           NewLinksFromUris(pb.PtDisplayInformations),
+		AdditionalInfos: NewAdditionalInformations(pb.AdditionalInformations),
 	}
+	return &header
 }
 
 func NewRow(pb *pbnavitia.RouteScheduleRow) gonavitia.Row {
