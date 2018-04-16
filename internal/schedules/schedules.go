@@ -25,6 +25,8 @@ type RouteScheduleRequest struct {
 	ItemsPerSchedule int32     `form:"items_per_schedule"`
 	DataFreshness    string    `form:"data_freshness"`
 	Filters          []string
+	User             *gormungandr.User //User doing the request, nil if authentication is disabled
+	Coverage         string            //requested coverage
 }
 
 func NewRouteScheduleRequest() RouteScheduleRequest {

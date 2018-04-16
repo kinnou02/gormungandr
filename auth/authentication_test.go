@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/CanalTP/gormungandr"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 )
@@ -90,7 +91,7 @@ func TestIsAuthorized(t *testing.T) {
 	defer db.Close()
 	mock = expectIsAuthorizeSuccess(mock)
 
-	user := User{
+	user := gormungandr.User{
 		Id:   42,
 		Type: "with_free_instances",
 	}
@@ -105,7 +106,7 @@ func TestIsAuthorizedSuperuser(t *testing.T) {
 	db, mock := newMock()
 	defer db.Close()
 
-	user := User{
+	user := gormungandr.User{
 		Id:   42,
 		Type: "super_user",
 	}
@@ -121,7 +122,7 @@ func TestIsAuthorizedFailed(t *testing.T) {
 	defer db.Close()
 	mock = expectIsAuthorizeNoResult(mock)
 
-	user := User{
+	user := gormungandr.User{
 		Id:   42,
 		Type: "with_free_instances",
 	}
@@ -137,7 +138,7 @@ func TestIsAuthorizedError(t *testing.T) {
 	defer db.Close()
 	mock = expectIsAuthorizeError(mock)
 
-	user := User{
+	user := gormungandr.User{
 		Id:   42,
 		Type: "with_free_instances",
 	}

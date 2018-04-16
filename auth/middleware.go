@@ -4,12 +4,10 @@ import (
 	"database/sql"
 	"time"
 
+	"github.com/CanalTP/gormungandr"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
-
-const userContextKey = "gormungandr.auth.User"
-const coverageContextKey = "gormungandr.auth.Coverage"
 
 func getToken(c *gin.Context) string {
 	username, _, ok := c.Request.BasicAuth()
@@ -58,25 +56,7 @@ func middleware(c *gin.Context, db *sql.DB) {
 		c.AbortWithStatusJSON(403, gin.H{"message": "authentication failed"})
 		return
 	}
-	c.Set(userContextKey, user)
-	c.Set(coverageContextKey, coverage)
+	gormungandr.SetUser(c, user)
+	gormungandr.SetCoverage(c, coverage)
 	c.Next()
-}
-
-//return the user associated to the context if no user has been set it returns (User{}, false)
-func GetUser(c *gin.Context) (user User, ok bool) {
-	tmp, ok := c.Get(userContextKey)
-	if !ok {
-		return User{}, ok
-	}
-	return tmp.(User), ok
-}
-
-//return the coverage associated to the context if no coverage has been set it returns ("", false)
-func GetCoverage(c *gin.Context) (coverage string, ok bool) {
-	tmp, ok := c.Get(coverageContextKey)
-	if !ok {
-		return "", ok
-	}
-	return tmp.(string), ok
 }

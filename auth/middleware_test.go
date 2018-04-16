@@ -4,6 +4,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/CanalTP/gormungandr"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 )
@@ -65,9 +66,9 @@ func TestMiddlewareNoToken(t *testing.T) {
 	middleware(c, db)
 	assert.True(t, c.IsAborted())
 	assert.Nil(t, mock.ExpectationsWereMet())
-	_, ok := GetUser(c)
+	_, ok := gormungandr.GetUser(c)
 	assert.False(t, ok)
-	_, ok = GetCoverage(c)
+	_, ok = gormungandr.GetCoverage(c)
 	assert.False(t, ok)
 }
 
@@ -81,9 +82,9 @@ func TestMiddlewareAuthFail(t *testing.T) {
 	middleware(c, db)
 	assert.True(t, c.IsAborted())
 	assert.Nil(t, mock.ExpectationsWereMet())
-	_, ok := GetUser(c)
+	_, ok := gormungandr.GetUser(c)
 	assert.False(t, ok)
-	_, ok = GetCoverage(c)
+	_, ok = gormungandr.GetCoverage(c)
 	assert.False(t, ok)
 }
 
@@ -98,9 +99,9 @@ func TestMiddlewareNotAuthorized(t *testing.T) {
 	middleware(c, db)
 	assert.True(t, c.IsAborted())
 	assert.Nil(t, mock.ExpectationsWereMet())
-	_, ok := GetUser(c)
+	_, ok := gormungandr.GetUser(c)
 	assert.False(t, ok)
-	_, ok = GetCoverage(c)
+	_, ok = gormungandr.GetCoverage(c)
 	assert.False(t, ok)
 }
 
@@ -115,11 +116,11 @@ func TestMiddlewareAuthorized(t *testing.T) {
 	middleware(c, db)
 	assert.False(t, c.IsAborted())
 	assert.Nil(t, mock.ExpectationsWereMet())
-	user, ok := GetUser(c)
+	user, ok := gormungandr.GetUser(c)
 	assert.True(t, ok)
 	assert.Equal(t, "mylogin", user.Username)
 
-	coverage, ok := GetCoverage(c)
+	coverage, ok := gormungandr.GetCoverage(c)
 	assert.True(t, ok)
 	assert.Equal(t, "", coverage) //no router is defined so the coverage from the query isn't parsed
 }

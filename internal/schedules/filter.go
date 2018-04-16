@@ -24,6 +24,11 @@ func NoRouteHandler(kraken *gormungandr.Kraken) gin.HandlerFunc {
 			}
 			request.ForbiddenUris = append(request.ForbiddenUris, c.QueryArray("forbidden_uris[]")...)
 			request.Filters = append(request.Filters, filter.Filters...)
+			if user, ok := gormungandr.GetUser(c); ok {
+				request.User = &user
+			}
+			//GetCoverage return an empty string if there is no coverage
+			request.Coverage, _ = gormungandr.GetCoverage(c)
 			RouteSchedule(c, kraken, &request)
 		} else {
 			c.JSON(http.StatusNotFound, gin.H{"error": "API not found"})

@@ -4,25 +4,18 @@ import (
 	"database/sql"
 	"time"
 
+	"github.com/CanalTP/gormungandr"
 	"github.com/pkg/errors"
 )
-
-type User struct {
-	Id       int
-	Username string
-	AppName  string
-	Type     string
-}
 
 var (
 	AuthenticationFailed = errors.New("Authentication failed")
 )
 
 //return AuthenticationFailed if the the authentication fail
-func Authenticate(token string, now time.Time, db *sql.DB) (User, error) {
-	var user User
+func Authenticate(token string, now time.Time, db *sql.DB) (user gormungandr.User, err error) {
 	row := db.QueryRow(authenticationQuery, token, now)
-	err := row.Scan(&user.Id, &user.Username, &user.AppName, &user.Type)
+	err = row.Scan(&user.Id, &user.Username, &user.AppName, &user.Type)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return user, AuthenticationFailed
@@ -33,13 +26,12 @@ func Authenticate(token string, now time.Time, db *sql.DB) (User, error) {
 	return user, nil
 }
 
-func IsAuthorized(user User, coverage string, db *sql.DB) (bool, error) {
-	var result bool
+func IsAuthorized(user gormungandr.User, coverage string, db *sql.DB) (result bool, err error) {
 	if user.Type == "super_user" {
 		return true, nil
 	}
 	row := db.QueryRow(authorizationQuery, coverage, user.Id)
-	err := row.Scan(&result)
+	err = row.Scan(&result)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return false, nil
