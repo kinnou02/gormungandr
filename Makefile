@@ -1,3 +1,5 @@
+VERSION := $(shell git describe --tag --always)
+
 .PHONY: setup
 setup: ## Install all the build and lint dependencies
 	go get -u github.com/alecthomas/gometalinter
@@ -49,7 +51,7 @@ ci: lint test ## Run all the tests and code checks
 
 .PHONY: build
 build: ## Build a version
-	go build  -tags=jsoniter -v ./cmd/...
+	go build -ldflags "-X github.com/CanalTP/gormungandr.Version=$(VERSION)" -tags=jsoniter -v ./cmd/...
 
 .PHONY: clean
 clean: ## Remove temporary files
@@ -58,6 +60,14 @@ clean: ## Remove temporary files
 .PHONY: install
 install: ## install project and it's dependancies, useful for autocompletion feature
 	go install -i
+
+.PHONY: docker
+docker: ## build docker image
+	docker build -t navitia/schedules:$(VERSION) .
+
+.PHONY: version
+version: ## display version of gormungandr
+	@echo $(VERSION)
 
 # Absolutely awesome: http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 .PHONY: help

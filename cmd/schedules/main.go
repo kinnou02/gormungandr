@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"os"
+	"runtime"
 	"time"
 
 	"database/sql"
@@ -19,6 +21,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/pflag"
 )
 
 func setupRouter() *gin.Engine {
@@ -49,30 +52,42 @@ func initLog(jsonLog bool) {
 }
 
 func main() {
+	showVersion := pflag.Bool("version", false, "show version")
+	pflag.Parse()
+	if *showVersion {
+		fmt.Printf("gormungandr %s built with %s", gormungandr.Version, runtime.Version())
+		os.Exit(0)
+	}
+
+	logger := logrus.WithFields(logrus.Fields{
+		"version": gormungandr.Version,
+		"runtime": runtime.Version(),
+	})
 	config, err := schedules.GetConfig()
 	if err != nil {
-		logrus.Fatalf("failure to load configuration: %+v", err)
+		logger.Fatalf("failure to load configuration: %+v", err)
 	}
 	initLog(config.JSONLog)
-	logrus.WithFields(logrus.Fields{
+	logger = logger.WithFields(logrus.Fields{
 		"config": config,
-	}).Debug("configuration loaded")
+	})
+	logger.Info("starting schedules")
 
 	kraken := gormungandr.NewKraken("default", config.Kraken, config.Timeout)
 
 	db, err := sql.Open("postgres", config.ConnectionString)
 	if err != nil {
-		logrus.Fatal("connection to postgres failed: ", err)
+		logger.Fatal("connection to postgres failed: ", err)
 	}
 	err = db.Ping()
 	if err != nil {
-		logrus.Fatal("connection to postgres failed: ", err)
+		logger.Fatal("connection to postgres failed: ", err)
 	}
 
 	if len(config.PprofListen) != 0 {
 		go func() {
 			logrus.Infof("pprof listening on %s", config.PprofListen)
-			logrus.Error(http.ListenAndServe(config.PprofListen, nil))
+			logger.Error(http.ListenAndServe(config.PprofListen, nil))
 		}()
 	}
 
@@ -86,6 +101,6 @@ func main() {
 	cov.GET("/*filter", schedules.NoRouteHandler(kraken))
 	err = r.Run(config.Listen)
 	if err != nil {
-		logrus.Errorf("failure to start: %+v", err)
+		logger.Errorf("failure to start: %+v", err)
 	}
 }
