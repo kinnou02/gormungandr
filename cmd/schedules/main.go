@@ -74,14 +74,21 @@ func main() {
 	logger.Info("starting schedules")
 
 	kraken := gormungandr.NewKraken("default", config.Kraken, config.Timeout)
+	r := setupRouter()
+	cov := r.Group("/v1/coverage/:coverage")
 
-	db, err := sql.Open("postgres", config.ConnectionString)
-	if err != nil {
-		logger.Fatal("connection to postgres failed: ", err)
-	}
-	err = db.Ping()
-	if err != nil {
-		logger.Fatal("connection to postgres failed: ", err)
+	if !config.SkipAuth {
+		//disable database if authentication isn't used
+		db, err := sql.Open("postgres", config.ConnectionString)
+		if err != nil {
+			logger.Fatal("connection to postgres failed: ", err)
+		}
+		err = db.Ping()
+		if err != nil {
+			logger.Fatal("connection to postgres failed: ", err)
+		}
+
+		cov.Use(auth.AuthenticationMiddleware(db))
 	}
 
 	if len(config.PprofListen) != 0 {
@@ -89,13 +96,6 @@ func main() {
 			logrus.Infof("pprof listening on %s", config.PprofListen)
 			logger.Error(http.ListenAndServe(config.PprofListen, nil))
 		}()
-	}
-
-	r := setupRouter()
-	cov := r.Group("/v1/coverage/:coverage")
-
-	if !config.SkipAuth {
-		cov.Use(auth.AuthenticationMiddleware(db))
 	}
 
 	cov.GET("/*filter", schedules.NoRouteHandler(kraken))
