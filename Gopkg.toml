@@ -43,11 +43,17 @@
 
 [[constraint]]
   name = "github.com/CanalTP/gonavitia"
-  branch = "master"
+  branch = "stat"
+  source = "github.com/kinnou02/gonavitia"
 
 [[constraint]]
   branch = "master"
   name = "github.com/spf13/pflag"
+
+[[constraint]]
+  branch = "content-encoding"
+  name = "github.com/rafaeljesus/rabbus"
+  source = "github.com/kinnou02/rabbus"
 
 [prune]
   go-tests = true

@@ -22,6 +22,8 @@ func init() {
 	pflag.Bool("skip-auth", false, "disable authentication")
 	pflag.String("newrelic-license", "", "license key new relic")
 	pflag.String("newrelic-appname", "gormungandr", "application name in new relic")
+	pflag.StringP("rabbitmq-dsn", "r", "amqp://guest:guest@localhost:5672/", "connection uri for rabbitmq")
+	pflag.Bool("skip-stats", false, "disable statistics")
 }
 
 type Config struct {
@@ -34,6 +36,8 @@ type Config struct {
 	SkipAuth         bool   `mapstructure:"skip-auth"`
 	NewRelicLicense  string `mapstructure:"newrelic-license"`
 	NewRelicAppName  string `mapstructure:"newrelic-appname"`
+	RabbitmqDsn      string `mapstructure:"rabbitmq-dsn"`
+	SkipStats        bool   `mapstructure:"skip-stats"`
 }
 
 func GetConfig() (Config, error) {

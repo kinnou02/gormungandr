@@ -11,13 +11,14 @@
   revision = "d6e3b3328b783f23731bc4d058875b0371ff8109"
 
 [[projects]]
-  branch = "master"
+  branch = "stat"
   name = "github.com/CanalTP/gonavitia"
   packages = [
     ".",
     "pbnavitia"
   ]
-  revision = "87cbdc6e972a6bfcafdc910e1e238f3d03484c51"
+  revision = "0862b3ebb8f96dd60034dbcb6bd40eebe94531ea"
+  source = "github.com/kinnou02/gonavitia"
 
 [[projects]]
   name = "github.com/Microsoft/go-winio"
@@ -320,6 +321,28 @@
   revision = "780932d4fbbe0e69b84c34c20f5c8d0981e109ea"
 
 [[projects]]
+  branch = "content-encoding"
+  name = "github.com/rafaeljesus/rabbus"
+  packages = [
+    ".",
+    "internal/amqp"
+  ]
+  revision = "dde12f7cd55764695c110af306dd4653fc0c3c12"
+  source = "github.com/kinnou02/rabbus"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/rafaeljesus/retry-go"
+  packages = ["."]
+  revision = "5981a380a87925ee03a78a7ff13574fabc804837"
+
+[[projects]]
+  name = "github.com/satori/go.uuid"
+  packages = ["."]
+  revision = "f58768cc1a7a7e77a3bd49e98cdd21419399b6a3"
+  version = "v1.2.0"
+
+[[projects]]
   name = "github.com/sirupsen/logrus"
   packages = ["."]
   revision = "d682213848ed68c0a260ca37d6dd5ace8423f5ba"
@@ -363,6 +386,12 @@
   packages = ["."]
   revision = "b5e8006cbee93ec955a89ab31e0e3ce3204f3736"
   version = "v1.0.2"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/streadway/amqp"
+  packages = ["."]
+  revision = "8e4aba63da9fc5571e01c6a45dc809a58cbc5a68"
 
 [[projects]]
   name = "github.com/stretchr/testify"
@@ -440,6 +469,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "509272dcb8065c969aa50b0228b7d4c10df068cb7b77aa8a0cf8bf499388775b"
+  inputs-digest = "0fb0d155a96c754169cc90510bd509351d1e58f9c3dd0e0cb79a89093056cbf9"
   solver-name = "gps-cdcl"
   solver-version = 1
