@@ -31,7 +31,7 @@ func setupRouter() *gin.Engine {
 
 	r.Use(ginrus.Ginrus(logrus.StandardLogger(), time.RFC3339, false))
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://*"},
+		AllowAllOrigins:  true,
 		AllowHeaders:     []string{"Access-Control-Request-Headers", "Authorization"},
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
