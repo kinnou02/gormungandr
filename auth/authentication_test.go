@@ -55,6 +55,7 @@ func newMock() (*sql.DB, sqlmock.Sqlmock) {
 }
 
 func TestAuthenticate(t *testing.T) {
+	t.Parallel()
 	db, mock := newMock()
 	defer db.Close()
 	mock = expectAuthSuccess(mock)
@@ -68,6 +69,7 @@ func TestAuthenticate(t *testing.T) {
 }
 
 func TestAuthenticateFail(t *testing.T) {
+	t.Parallel()
 	db, mock := newMock()
 	defer db.Close()
 	mock = expectAuthNoResult(mock)
@@ -78,6 +80,7 @@ func TestAuthenticateFail(t *testing.T) {
 }
 
 func TestAuthenticateError(t *testing.T) {
+	t.Parallel()
 	db, mock := newMock()
 	defer db.Close()
 	mock = expectAuthError(mock)
@@ -87,6 +90,7 @@ func TestAuthenticateError(t *testing.T) {
 }
 
 func TestIsAuthorized(t *testing.T) {
+	t.Parallel()
 	db, mock := newMock()
 	defer db.Close()
 	mock = expectIsAuthorizeSuccess(mock)
@@ -103,6 +107,7 @@ func TestIsAuthorized(t *testing.T) {
 }
 
 func TestIsAuthorizedSuperuser(t *testing.T) {
+	t.Parallel()
 	db, mock := newMock()
 	defer db.Close()
 
@@ -118,6 +123,7 @@ func TestIsAuthorizedSuperuser(t *testing.T) {
 }
 
 func TestIsAuthorizedFailed(t *testing.T) {
+	t.Parallel()
 	db, mock := newMock()
 	defer db.Close()
 	mock = expectIsAuthorizeNoResult(mock)
@@ -134,6 +140,7 @@ func TestIsAuthorizedFailed(t *testing.T) {
 }
 
 func TestIsAuthorizedError(t *testing.T) {
+	t.Parallel()
 	db, mock := newMock()
 	defer db.Close()
 	mock = expectIsAuthorizeError(mock)

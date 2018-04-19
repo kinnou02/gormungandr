@@ -67,6 +67,7 @@ func TestRealAuthenticate(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test Docker in short mode.")
 	}
+	t.Parallel()
 	_, err := Authenticate("thisIsNotAkey", time.Now(), dockerDB)
 	assert.Equal(t, AuthenticationFailed, err)
 

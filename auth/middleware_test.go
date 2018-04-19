@@ -14,6 +14,7 @@ func init() {
 }
 
 func TestGetTokenBasicAuth(t *testing.T) {
+	t.Parallel()
 	c, _ := gin.CreateTestContext(httptest.NewRecorder())
 	c.Request = httptest.NewRequest("Get", "/", nil)
 
@@ -33,6 +34,7 @@ func TestGetTokenBasicAuth(t *testing.T) {
 }
 
 func TestGetTokenHeader(t *testing.T) {
+	t.Parallel()
 	c, _ := gin.CreateTestContext(httptest.NewRecorder())
 	c.Request = httptest.NewRequest("Get", "/", nil)
 
@@ -49,6 +51,7 @@ func TestGetTokenHeader(t *testing.T) {
 }
 
 func TestGetTokenParams(t *testing.T) {
+	t.Parallel()
 	c, _ := gin.CreateTestContext(httptest.NewRecorder())
 
 	c.Request = httptest.NewRequest("Get", "/?key=mykey", nil)
@@ -59,6 +62,7 @@ func TestGetTokenParams(t *testing.T) {
 }
 
 func TestMiddlewareNoToken(t *testing.T) {
+	t.Parallel()
 	c, _ := gin.CreateTestContext(httptest.NewRecorder())
 	c.Request = httptest.NewRequest("Get", "/coverage/fr-idf", nil)
 	db, mock := newMock()
@@ -73,6 +77,7 @@ func TestMiddlewareNoToken(t *testing.T) {
 }
 
 func TestMiddlewareAuthFail(t *testing.T) {
+	t.Parallel()
 	c, _ := gin.CreateTestContext(httptest.NewRecorder())
 	c.Request = httptest.NewRequest("Get", "/coverage/fr-idf", nil)
 	c.Request.SetBasicAuth("mykey", "")
@@ -89,6 +94,7 @@ func TestMiddlewareAuthFail(t *testing.T) {
 }
 
 func TestMiddlewareNotAuthorized(t *testing.T) {
+	t.Parallel()
 	c, _ := gin.CreateTestContext(httptest.NewRecorder())
 	c.Request = httptest.NewRequest("Get", "/coverage/fr-idf", nil)
 	c.Request.SetBasicAuth("mykey", "")
@@ -106,6 +112,7 @@ func TestMiddlewareNotAuthorized(t *testing.T) {
 }
 
 func TestMiddlewareAuthorized(t *testing.T) {
+	t.Parallel()
 	c, _ := gin.CreateTestContext(httptest.NewRecorder())
 	c.Request = httptest.NewRequest("Get", "/coverage/fr-idf", nil)
 	c.Request.SetBasicAuth("mykey", "")
