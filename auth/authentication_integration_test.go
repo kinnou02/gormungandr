@@ -77,6 +77,9 @@ func TestRealAuthenticate(t *testing.T) {
 	assert.Equal(t, 1, user.Id)
 	assert.Equal(t, "test", user.AppName)
 	assert.Equal(t, "with_free_instances", user.Type)
+	assert.Equal(t, "115aa17b-63d3-4a31-acd6-edebebd4d415", user.Token)
+	assert.Equal(t, "navitia.io", user.EndPointName)
+	assert.Equal(t, 1, user.EndPointId)
 
 	//fr-idf is in opendata
 	ok, err := IsAuthorized(user, "fr-idf", dockerDB)

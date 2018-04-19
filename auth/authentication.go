@@ -15,7 +15,7 @@ var (
 //return AuthenticationFailed if the the authentication fail
 func Authenticate(token string, now time.Time, db *sql.DB) (user gormungandr.User, err error) {
 	row := db.QueryRow(authenticationQuery, token, now)
-	err = row.Scan(&user.Id, &user.Username, &user.AppName, &user.Type)
+	err = row.Scan(&user.Id, &user.Username, &user.AppName, &user.Type, &user.EndPointId, &user.EndPointName, &user.Token)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return user, AuthenticationFailed
@@ -47,9 +47,13 @@ const authenticationQuery = `
 		u.id,
 		u.login,
 		k.app_name,
-		u.type
+		u.type,
+		e.id,
+		e.name,
+		k.token
 	FROM "user" u
 	JOIN "key" k on u.id = k.user_id
+	JOIN "end_point" e on u.end_point_id=e.id
 	WHERE k.token = $1
 	AND (k.valid_until > $2 or k.valid_until is null)
 `

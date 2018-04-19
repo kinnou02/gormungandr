@@ -8,10 +8,13 @@ const userContextKey = "gormungandr.User"
 const coverageContextKey = "gormungandr.Coverage"
 
 type User struct {
-	Id       int
-	Username string
-	AppName  string
-	Type     string
+	Id           int
+	Username     string
+	AppName      string
+	Type         string
+	Token        string
+	EndPointId   int
+	EndPointName string
 }
 
 //return the user associated to the context if no user has been set it returns (User{}, false)

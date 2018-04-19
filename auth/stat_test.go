@@ -191,9 +191,12 @@ func TestBuildRouteSchedules(t *testing.T) {
 	ginContext.Request = httptest.NewRequest("Get", "/", nil)
 	response.Pagination = &gonavitia.Pagination{ItemsOnPage: 42}
 	request.User = gormungandr.User{
-		Username: "bob",
-		Id:       7,
-		AppName:  "Bricolage&co",
+		Username:     "bob",
+		Id:           7,
+		AppName:      "Bricolage&co",
+		Token:        "key",
+		EndPointId:   3,
+		EndPointName: "navitia.io",
 	}
 	request.Coverage = "fr-idf"
 
@@ -201,6 +204,9 @@ func TestBuildRouteSchedules(t *testing.T) {
 	assert.Equal(t, "bob", pb.GetUserName())
 	assert.Equal(t, "Bricolage&co", pb.GetApplicationName())
 	assert.Equal(t, int32(7), pb.GetUserId())
+	assert.Equal(t, "key", pb.GetToken())
+	assert.Equal(t, "navitia.io", pb.GetEndPointName())
+	assert.Equal(t, int32(3), pb.GetEndPointId())
 	require.Len(t, pb.GetCoverages(), 1)
 	assert.Equal(t, "fr-idf", pb.Coverages[0].GetRegionId())
 	require.NotNil(t, pb.InfoResponse)

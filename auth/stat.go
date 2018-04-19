@@ -67,6 +67,9 @@ func buildStatForRouteSchedule(request schedules.RouteScheduleRequest, response 
 		UserId:          proto.Int32(int32(request.User.Id)),
 		UserName:        &request.User.Username,
 		ApplicationName: &request.User.AppName,
+		Token:           &request.User.Token, //we should'nt do this...
+		EndPointId:      proto.Int32(int32(request.User.EndPointId)),
+		EndPointName:    &request.User.EndPointName,
 		ApplicationId:   proto.Int32(-1), //same as jormun
 		RequestDuration: proto.Int32(0),  //TODO
 		Path:            proto.String(c.Request.URL.Path),

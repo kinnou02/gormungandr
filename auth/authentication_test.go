@@ -11,14 +11,14 @@ import (
 )
 
 func expectAuthSuccess(mock sqlmock.Sqlmock) sqlmock.Sqlmock {
-	rows := sqlmock.NewRows([]string{"id", "login", "app_name", "type"}).
-		AddRow(42, "mylogin", "myapp", "with_free_instances")
+	rows := sqlmock.NewRows([]string{"id", "login", "app_name", "type", "end_point_id", "end_point_name", "token"}).
+		AddRow(42, "mylogin", "myapp", "with_free_instances", 1, "navio", "key")
 	mock.ExpectQuery("SELECT u.id").WillReturnRows(rows)
 	return mock
 }
 
 func expectAuthNoResult(mock sqlmock.Sqlmock) sqlmock.Sqlmock {
-	rows := sqlmock.NewRows([]string{"id", "login", "app_name", "type"})
+	rows := sqlmock.NewRows([]string{"id", "login", "app_name", "type", "end_point_id", "end_point_name", "token"})
 	mock.ExpectQuery("SELECT u.id").WillReturnRows(rows)
 	return mock
 }
@@ -66,6 +66,9 @@ func TestAuthenticate(t *testing.T) {
 	assert.Equal(t, 42, user.Id)
 	assert.Equal(t, "myapp", user.AppName)
 	assert.Equal(t, "with_free_instances", user.Type)
+	assert.Equal(t, 1, user.EndPointId)
+	assert.Equal(t, "navio", user.EndPointName)
+	assert.Equal(t, "key", user.Token)
 }
 
 func TestAuthenticateFail(t *testing.T) {
