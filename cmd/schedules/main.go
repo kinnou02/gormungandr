@@ -43,7 +43,7 @@ func setupRouter(config schedules.Config) *gin.Engine {
 		nrConfig := newrelic.NewConfig(config.NewRelicAppName, config.NewRelicLicense)
 		app, err := newrelic.NewApplication(nrConfig)
 		if err != nil {
-			panic(err)
+			logrus.Fatalf("Impossible to initialize newrelic: %+v", err)
 		}
 		r.Use(nrgin.Middleware(app))
 	}
