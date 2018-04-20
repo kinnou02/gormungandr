@@ -26,10 +26,10 @@ import (
 
 func setupRouter() *gin.Engine {
 	r := gin.New()
-	// Recovery middleware recovers from any panics and writes a 500 if there was one.
-	r.Use(gin.Recovery())
-
 	r.Use(ginrus.Ginrus(logrus.StandardLogger(), time.RFC3339, false))
+	// Recovery middleware recovers from any panics and writes a 500 if there was one.
+	r.Use(gormungandr.Recovery())
+
 	r.Use(cors.New(cors.Config{
 		AllowAllOrigins:  true,
 		AllowHeaders:     []string{"Access-Control-Request-Headers", "Authorization"},
