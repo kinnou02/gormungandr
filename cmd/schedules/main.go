@@ -1,10 +1,13 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"os"
+	"os/signal"
 	"runtime"
+	"syscall"
 	"time"
 
 	"database/sql"
@@ -85,8 +88,8 @@ func main() {
 	logger.Info("starting schedules")
 
 	kraken := gormungandr.NewKraken("default", config.Kraken, config.Timeout)
-	r := setupRouter(config)
-	cov := r.Group("/v1/coverage/:coverage")
+	router := setupRouter(config)
+	cov := router.Group("/v1/coverage/:coverage")
 
 	if !config.SkipAuth {
 		//disable database if authentication isn't used
@@ -110,8 +113,30 @@ func main() {
 	}
 
 	cov.GET("/*filter", schedules.NoRouteHandler(kraken))
-	err = r.Run(config.Listen)
-	if err != nil {
-		logger.Errorf("failure to start: %+v", err)
+
+	srv := &http.Server{
+		Addr:    config.Listen,
+		Handler: router,
 	}
+	go func() {
+		// service connections
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			logger.Fatalf("listen: %s", err)
+		}
+	}()
+
+	// Wait for interrupt signal to gracefully shutdown the server with
+	// a timeout of 5 seconds.
+	quit := make(chan os.Signal, 5)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	logrus.Info("Shutdown Server ...")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if err := srv.Shutdown(ctx); err != nil {
+		logrus.Fatal("Server Shutdown:", err)
+	}
+	logrus.Info("Server exiting")
+
 }
