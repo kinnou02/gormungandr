@@ -11,14 +11,13 @@
   revision = "d6e3b3328b783f23731bc4d058875b0371ff8109"
 
 [[projects]]
-  branch = "stat"
+  branch = "master"
   name = "github.com/CanalTP/gonavitia"
   packages = [
     ".",
     "pbnavitia"
   ]
-  revision = "0862b3ebb8f96dd60034dbcb6bd40eebe94531ea"
-  source = "github.com/kinnou02/gonavitia"
+  revision = "d619933517253bbacb30d17adf391c5b11d9e880"
 
 [[projects]]
   name = "github.com/Microsoft/go-winio"
@@ -394,8 +393,18 @@
   revision = "8e4aba63da9fc5571e01c6a45dc809a58cbc5a68"
 
 [[projects]]
+  name = "github.com/stretchr/objx"
+  packages = ["."]
+  revision = "facf9a85c22f48d2f52f2380e4efce1768749a89"
+  version = "v0.1"
+
+[[projects]]
   name = "github.com/stretchr/testify"
-  packages = ["assert"]
+  packages = [
+    "assert",
+    "mock",
+    "require"
+  ]
   revision = "12b6f73e6084dad08a7c6e575284b177ecafbc71"
   version = "v1.2.1"
 
@@ -469,6 +478,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "0fb0d155a96c754169cc90510bd509351d1e58f9c3dd0e0cb79a89093056cbf9"
+  inputs-digest = "5ba129d04f83f3c090d01d70f014167153502954245801f30feecd2a75a3cbe8"
   solver-name = "gps-cdcl"
   solver-version = 1
