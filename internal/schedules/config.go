@@ -20,6 +20,8 @@ func init() {
 		"connection string to the jormungandr database",
 	)
 	pflag.Bool("skip-auth", false, "disable authentication")
+	pflag.String("newrelic-license", "", "license key new relic")
+	pflag.String("newrelic-appname", "gormungandr", "application name in new relic")
 }
 
 type Config struct {
@@ -30,6 +32,8 @@ type Config struct {
 	JSONLog          bool   `mapstructure:"json-log"`
 	ConnectionString string `mapstructure:"connection-string"`
 	SkipAuth         bool   `mapstructure:"skip-auth"`
+	NewRelicLicense  string `mapstructure:"newrelic-license"`
+	NewRelicAppName  string `mapstructure:"newrelic-appname"`
 }
 
 func GetConfig() (Config, error) {
