@@ -1,10 +1,11 @@
 package gormungandr
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 	"net/http/httputil"
 	"runtime/debug"
+
+	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 func Recovery() gin.HandlerFunc {

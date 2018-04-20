@@ -79,7 +79,8 @@ func main() {
 
 	if !config.SkipAuth {
 		//disable database if authentication isn't used
-		db, err := sql.Open("postgres", config.ConnectionString)
+		var db *sql.DB
+		db, err = sql.Open("postgres", config.ConnectionString)
 		if err != nil {
 			logger.Fatal("connection to postgres failed: ", err)
 		}
