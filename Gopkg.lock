@@ -320,14 +320,13 @@
   revision = "780932d4fbbe0e69b84c34c20f5c8d0981e109ea"
 
 [[projects]]
-  branch = "content-encoding"
+  branch = "master"
   name = "github.com/rafaeljesus/rabbus"
   packages = [
     ".",
     "internal/amqp"
   ]
-  revision = "dde12f7cd55764695c110af306dd4653fc0c3c12"
-  source = "github.com/kinnou02/rabbus"
+  revision = "9b66eef60b25c85d04183a062ac6ba8816157706"
 
 [[projects]]
   branch = "master"
@@ -478,6 +477,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "5ba129d04f83f3c090d01d70f014167153502954245801f30feecd2a75a3cbe8"
+  inputs-digest = "c6dfd1e91ea4762fbfb618fa2ba83f3dafdd50e5b3a6a85277b069779374584b"
   solver-name = "gps-cdcl"
   solver-version = 1

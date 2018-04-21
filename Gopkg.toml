@@ -50,9 +50,8 @@
   name = "github.com/spf13/pflag"
 
 [[constraint]]
-  branch = "content-encoding"
   name = "github.com/rafaeljesus/rabbus"
-  source = "github.com/kinnou02/rabbus"
+  version = "v.2.2"
 
 [prune]
   go-tests = true
