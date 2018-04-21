@@ -41,7 +41,15 @@ func init() {
 	gin.SetMode(gin.TestMode)
 }
 
-func newMockRabbus(sizeAsync, sizeErr, sizeOk int, expectAsync, expectOk, expectErr bool) (mock *mockRabbus, emitAsync chan rabbus.Message, emitErr chan error, emitOK chan struct{}) {
+func newMockRabbus(
+	sizeAsync, sizeErr, sizeOk int,
+	expectAsync, expectOk, expectErr bool,
+) (
+	mock *mockRabbus,
+	emitAsync chan rabbus.Message,
+	emitErr chan error,
+	emitOK chan struct{},
+) {
 	mock = new(mockRabbus)
 	emitAsync = make(chan rabbus.Message, sizeAsync)
 	emitErr = make(chan error, sizeErr)
