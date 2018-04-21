@@ -127,7 +127,7 @@ func main() {
 			logrus.Fatal("failure while connecting to rabbitmq ", err)
 		}
 		defer func(rmq *rabbus.Rabbus) {
-			if errr := rmq.Close(); errr != nil {
+			if err = rmq.Close(); err != nil {
 				logrus.Fatal("failure while closing rabbitmq connection ", err)
 			}
 		}(rmq)
@@ -135,8 +135,8 @@ func main() {
 		defer cancel()
 
 		go func() {
-			if errr := rmq.Run(ctx); errr != nil {
-				logrus.Errorf("rabbus.run ended with error: %+v", errr)
+			if err = rmq.Run(ctx); err != nil {
+				logrus.Errorf("rabbus.run ended with error: %+v", err)
 			}
 		}()
 		statPublisher = auth.NewStatPublisher(rmq, "test_ex", 2*time.Second)
