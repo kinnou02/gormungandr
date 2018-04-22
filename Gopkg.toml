@@ -53,6 +53,10 @@
   name = "github.com/rafaeljesus/rabbus"
   version = "v.2.2"
 
+[[constraint]]
+  name = "github.com/prometheus/client_golang"
+  branch = "master"
+
 [prune]
   go-tests = true
   unused-packages = true

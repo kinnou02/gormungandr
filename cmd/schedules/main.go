@@ -33,6 +33,7 @@ import (
 func setupRouter(config schedules.Config) *gin.Engine {
 	r := gin.New()
 	r.Use(ginrus.Ginrus(logrus.StandardLogger(), time.RFC3339, false))
+	r.Use(gormungandr.InstrumentGin())
 	// Recovery middleware recovers from any panics and writes a 500 if there was one.
 	r.Use(gormungandr.Recovery())
 
