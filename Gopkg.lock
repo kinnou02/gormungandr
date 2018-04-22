@@ -112,6 +112,12 @@
   version = "v1.2.0"
 
 [[projects]]
+  name = "github.com/gchaincl/sqlhooks"
+  packages = ["."]
+  revision = "928fba38878d453967fcf9b4a0b7952b90c94d34"
+  version = "v1.1.0"
+
+[[projects]]
   name = "github.com/gin-contrib/cors"
   packages = ["."]
   revision = "cf4846e6a636a76237a28d9286f163c132e841bc"
@@ -477,6 +483,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "4c1bce51f54eaf4de89b763255b9479274de44e0dd0e1b42bd29b57febf6a177"
+  inputs-digest = "0c4f204f9ce0c75cc02dc359959d418a5b218d6604ddd7b0a06820ad7b581b86"
   solver-name = "gps-cdcl"
   solver-version = 1

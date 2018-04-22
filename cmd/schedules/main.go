@@ -17,7 +17,6 @@ import (
 	"github.com/CanalTP/gormungandr"
 	"github.com/CanalTP/gormungandr/auth"
 	"github.com/CanalTP/gormungandr/internal/schedules"
-	_ "github.com/lib/pq"
 	"github.com/rafaeljesus/rabbus"
 
 	"github.com/gin-contrib/cors"
@@ -96,7 +95,7 @@ func main() {
 	if !config.SkipAuth {
 		//disable database if authentication isn't used
 		var db *sql.DB
-		db, err = sql.Open("postgres", config.ConnectionString)
+		db, err = sql.Open("postgresInstrumented", config.ConnectionString)
 		if err != nil {
 			logger.Fatal("connection to postgres failed: ", err)
 		}
