@@ -135,7 +135,7 @@ func main() {
 		defer cancel()
 
 		go func() {
-			if err = rmq.Run(ctx); err != nil {
+			if err = rmq.Run(ctx); err != nil && err != context.Canceled {
 				logrus.Errorf("rabbus.run ended with error: %+v", err)
 			}
 		}()
