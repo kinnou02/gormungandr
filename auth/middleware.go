@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"time"
 
+	"github.com/CanalTP/gormungandr"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
@@ -55,5 +56,7 @@ func middleware(c *gin.Context, db *sql.DB) {
 		c.AbortWithStatusJSON(403, gin.H{"message": "authentication failed"})
 		return
 	}
+	gormungandr.SetUser(c, user)
+	gormungandr.SetCoverage(c, coverage)
 	c.Next()
 }

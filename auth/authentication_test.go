@@ -5,19 +5,20 @@ import (
 	"testing"
 	"time"
 
+	"github.com/CanalTP/gormungandr"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 )
 
 func expectAuthSuccess(mock sqlmock.Sqlmock) sqlmock.Sqlmock {
-	rows := sqlmock.NewRows([]string{"id", "login", "app_name", "type"}).
-		AddRow(42, "mylogin", "myapp", "with_free_instances")
+	rows := sqlmock.NewRows([]string{"id", "login", "app_name", "type", "end_point_id", "end_point_name", "token"}).
+		AddRow(42, "mylogin", "myapp", "with_free_instances", 1, "navio", "key")
 	mock.ExpectQuery("SELECT u.id").WillReturnRows(rows)
 	return mock
 }
 
 func expectAuthNoResult(mock sqlmock.Sqlmock) sqlmock.Sqlmock {
-	rows := sqlmock.NewRows([]string{"id", "login", "app_name", "type"})
+	rows := sqlmock.NewRows([]string{"id", "login", "app_name", "type", "end_point_id", "end_point_name", "token"})
 	mock.ExpectQuery("SELECT u.id").WillReturnRows(rows)
 	return mock
 }
@@ -54,6 +55,7 @@ func newMock() (*sql.DB, sqlmock.Sqlmock) {
 }
 
 func TestAuthenticate(t *testing.T) {
+	t.Parallel()
 	db, mock := newMock()
 	defer db.Close()
 	mock = expectAuthSuccess(mock)
@@ -64,9 +66,13 @@ func TestAuthenticate(t *testing.T) {
 	assert.Equal(t, 42, user.Id)
 	assert.Equal(t, "myapp", user.AppName)
 	assert.Equal(t, "with_free_instances", user.Type)
+	assert.Equal(t, 1, user.EndPointId)
+	assert.Equal(t, "navio", user.EndPointName)
+	assert.Equal(t, "key", user.Token)
 }
 
 func TestAuthenticateFail(t *testing.T) {
+	t.Parallel()
 	db, mock := newMock()
 	defer db.Close()
 	mock = expectAuthNoResult(mock)
@@ -77,6 +83,7 @@ func TestAuthenticateFail(t *testing.T) {
 }
 
 func TestAuthenticateError(t *testing.T) {
+	t.Parallel()
 	db, mock := newMock()
 	defer db.Close()
 	mock = expectAuthError(mock)
@@ -86,11 +93,12 @@ func TestAuthenticateError(t *testing.T) {
 }
 
 func TestIsAuthorized(t *testing.T) {
+	t.Parallel()
 	db, mock := newMock()
 	defer db.Close()
 	mock = expectIsAuthorizeSuccess(mock)
 
-	user := User{
+	user := gormungandr.User{
 		Id:   42,
 		Type: "with_free_instances",
 	}
@@ -102,10 +110,11 @@ func TestIsAuthorized(t *testing.T) {
 }
 
 func TestIsAuthorizedSuperuser(t *testing.T) {
+	t.Parallel()
 	db, mock := newMock()
 	defer db.Close()
 
-	user := User{
+	user := gormungandr.User{
 		Id:   42,
 		Type: "super_user",
 	}
@@ -117,11 +126,12 @@ func TestIsAuthorizedSuperuser(t *testing.T) {
 }
 
 func TestIsAuthorizedFailed(t *testing.T) {
+	t.Parallel()
 	db, mock := newMock()
 	defer db.Close()
 	mock = expectIsAuthorizeNoResult(mock)
 
-	user := User{
+	user := gormungandr.User{
 		Id:   42,
 		Type: "with_free_instances",
 	}
@@ -133,11 +143,12 @@ func TestIsAuthorizedFailed(t *testing.T) {
 }
 
 func TestIsAuthorizedError(t *testing.T) {
+	t.Parallel()
 	db, mock := newMock()
 	defer db.Close()
 	mock = expectIsAuthorizeError(mock)
 
-	user := User{
+	user := gormungandr.User{
 		Id:   42,
 		Type: "with_free_instances",
 	}

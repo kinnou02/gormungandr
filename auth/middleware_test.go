@@ -4,6 +4,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/CanalTP/gormungandr"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 )
@@ -13,6 +14,7 @@ func init() {
 }
 
 func TestGetTokenBasicAuth(t *testing.T) {
+	t.Parallel()
 	c, _ := gin.CreateTestContext(httptest.NewRecorder())
 	c.Request = httptest.NewRequest("Get", "/", nil)
 
@@ -32,6 +34,7 @@ func TestGetTokenBasicAuth(t *testing.T) {
 }
 
 func TestGetTokenHeader(t *testing.T) {
+	t.Parallel()
 	c, _ := gin.CreateTestContext(httptest.NewRecorder())
 	c.Request = httptest.NewRequest("Get", "/", nil)
 
@@ -48,6 +51,7 @@ func TestGetTokenHeader(t *testing.T) {
 }
 
 func TestGetTokenParams(t *testing.T) {
+	t.Parallel()
 	c, _ := gin.CreateTestContext(httptest.NewRecorder())
 
 	c.Request = httptest.NewRequest("Get", "/?key=mykey", nil)
@@ -58,6 +62,7 @@ func TestGetTokenParams(t *testing.T) {
 }
 
 func TestMiddlewareNoToken(t *testing.T) {
+	t.Parallel()
 	c, _ := gin.CreateTestContext(httptest.NewRecorder())
 	c.Request = httptest.NewRequest("Get", "/coverage/fr-idf", nil)
 	db, mock := newMock()
@@ -65,9 +70,14 @@ func TestMiddlewareNoToken(t *testing.T) {
 	middleware(c, db)
 	assert.True(t, c.IsAborted())
 	assert.Nil(t, mock.ExpectationsWereMet())
+	_, ok := gormungandr.GetUser(c)
+	assert.False(t, ok)
+	_, ok = gormungandr.GetCoverage(c)
+	assert.False(t, ok)
 }
 
 func TestMiddlewareAuthFail(t *testing.T) {
+	t.Parallel()
 	c, _ := gin.CreateTestContext(httptest.NewRecorder())
 	c.Request = httptest.NewRequest("Get", "/coverage/fr-idf", nil)
 	c.Request.SetBasicAuth("mykey", "")
@@ -77,9 +87,14 @@ func TestMiddlewareAuthFail(t *testing.T) {
 	middleware(c, db)
 	assert.True(t, c.IsAborted())
 	assert.Nil(t, mock.ExpectationsWereMet())
+	_, ok := gormungandr.GetUser(c)
+	assert.False(t, ok)
+	_, ok = gormungandr.GetCoverage(c)
+	assert.False(t, ok)
 }
 
 func TestMiddlewareNotAuthorized(t *testing.T) {
+	t.Parallel()
 	c, _ := gin.CreateTestContext(httptest.NewRecorder())
 	c.Request = httptest.NewRequest("Get", "/coverage/fr-idf", nil)
 	c.Request.SetBasicAuth("mykey", "")
@@ -90,9 +105,14 @@ func TestMiddlewareNotAuthorized(t *testing.T) {
 	middleware(c, db)
 	assert.True(t, c.IsAborted())
 	assert.Nil(t, mock.ExpectationsWereMet())
+	_, ok := gormungandr.GetUser(c)
+	assert.False(t, ok)
+	_, ok = gormungandr.GetCoverage(c)
+	assert.False(t, ok)
 }
 
 func TestMiddlewareAuthorized(t *testing.T) {
+	t.Parallel()
 	c, _ := gin.CreateTestContext(httptest.NewRecorder())
 	c.Request = httptest.NewRequest("Get", "/coverage/fr-idf", nil)
 	c.Request.SetBasicAuth("mykey", "")
@@ -103,4 +123,11 @@ func TestMiddlewareAuthorized(t *testing.T) {
 	middleware(c, db)
 	assert.False(t, c.IsAborted())
 	assert.Nil(t, mock.ExpectationsWereMet())
+	user, ok := gormungandr.GetUser(c)
+	assert.True(t, ok)
+	assert.Equal(t, "mylogin", user.Username)
+
+	coverage, ok := gormungandr.GetCoverage(c)
+	assert.True(t, ok)
+	assert.Equal(t, "", coverage) //no router is defined so the coverage from the query isn't parsed
 }

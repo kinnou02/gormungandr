@@ -3,13 +3,21 @@ package schedules
 import (
 	"net/http"
 
+	"github.com/CanalTP/gonavitia"
 	"github.com/CanalTP/gormungandr"
 	"github.com/gin-gonic/gin"
+	"github.com/satori/go.uuid"
 	"github.com/sirupsen/logrus"
 )
 
-func NoRouteHandler(kraken *gormungandr.Kraken) gin.HandlerFunc {
+type Publisher interface {
+	PublishRouteSchedule(request RouteScheduleRequest, response gonavitia.RouteScheduleResponse, c gin.Context) error
+}
+
+func NoRouteHandler(kraken *gormungandr.Kraken, publisher Publisher) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
+		request_id := uuid.NewV4()
+		logger := logrus.WithField("request_id", request_id)
 		filter, err := gormungandr.ParsePath(c.Param("filter"))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err})
@@ -18,13 +26,18 @@ func NoRouteHandler(kraken *gormungandr.Kraken) gin.HandlerFunc {
 		if filter.API == "route_schedules" {
 			request := NewRouteScheduleRequest()
 			if err := c.ShouldBindQuery(&request); err != nil {
-				logrus.Debugf("%+v\n", err)
+				logger.Debugf("%+v\n", err)
 				c.JSON(http.StatusBadRequest, gin.H{"error": err})
 				return
 			}
+			request.ID = request_id
 			request.ForbiddenUris = append(request.ForbiddenUris, c.QueryArray("forbidden_uris[]")...)
 			request.Filters = append(request.Filters, filter.Filters...)
-			RouteSchedule(c, kraken, &request)
+			if user, ok := gormungandr.GetUser(c); ok {
+				request.User = user
+			}
+			request.Coverage = c.Param("coverage")
+			RouteSchedule(c, kraken, &request, publisher, logger)
 		} else {
 			c.JSON(http.StatusNotFound, gin.H{"error": "API not found"})
 

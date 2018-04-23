@@ -18,6 +18,7 @@ import (
 	"github.com/CanalTP/gormungandr/auth"
 	"github.com/CanalTP/gormungandr/internal/schedules"
 	_ "github.com/lib/pq"
+	"github.com/rafaeljesus/rabbus"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/contrib/ginrus"
@@ -93,7 +94,8 @@ func main() {
 
 	if !config.SkipAuth {
 		//disable database if authentication isn't used
-		db, err := sql.Open("postgres", config.ConnectionString)
+		var db *sql.DB
+		db, err = sql.Open("postgres", config.ConnectionString)
 		if err != nil {
 			logger.Fatal("connection to postgres failed: ", err)
 		}
@@ -112,7 +114,35 @@ func main() {
 		}()
 	}
 
-	cov.GET("/*filter", schedules.NoRouteHandler(kraken))
+	var statPublisher *auth.StatPublisher
+	if !config.SkipStats {
+		var rmq *rabbus.Rabbus
+		rmq, err = rabbus.New(
+			config.RabbitmqDsn,
+			rabbus.Durable(true),
+			rabbus.Attempts(3),
+			rabbus.Sleep(time.Second*2),
+		)
+		if err != nil {
+			logrus.Fatal("failure while connecting to rabbitmq ", err)
+		}
+		defer func(rmq *rabbus.Rabbus) {
+			if err = rmq.Close(); err != nil {
+				logrus.Fatal("failure while closing rabbitmq connection ", err)
+			}
+		}(rmq)
+		ctx, cancel := context.WithCancel(context.Background())
+		defer cancel()
+
+		go func() {
+			if err = rmq.Run(ctx); err != nil && err != context.Canceled {
+				logrus.Errorf("rabbus.run ended with error: %+v", err)
+			}
+		}()
+		statPublisher = auth.NewStatPublisher(rmq, "test_ex", 2*time.Second)
+	}
+
+	cov.GET("/*filter", schedules.NoRouteHandler(kraken, statPublisher))
 
 	srv := &http.Server{
 		Addr:    config.Listen,

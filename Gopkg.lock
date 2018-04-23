@@ -17,7 +17,7 @@
     ".",
     "pbnavitia"
   ]
-  revision = "87cbdc6e972a6bfcafdc910e1e238f3d03484c51"
+  revision = "d619933517253bbacb30d17adf391c5b11d9e880"
 
 [[projects]]
   name = "github.com/Microsoft/go-winio"
@@ -320,6 +320,27 @@
   revision = "780932d4fbbe0e69b84c34c20f5c8d0981e109ea"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/rafaeljesus/rabbus"
+  packages = [
+    ".",
+    "internal/amqp"
+  ]
+  revision = "9b66eef60b25c85d04183a062ac6ba8816157706"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/rafaeljesus/retry-go"
+  packages = ["."]
+  revision = "5981a380a87925ee03a78a7ff13574fabc804837"
+
+[[projects]]
+  name = "github.com/satori/go.uuid"
+  packages = ["."]
+  revision = "f58768cc1a7a7e77a3bd49e98cdd21419399b6a3"
+  version = "v1.2.0"
+
+[[projects]]
   name = "github.com/sirupsen/logrus"
   packages = ["."]
   revision = "d682213848ed68c0a260ca37d6dd5ace8423f5ba"
@@ -365,8 +386,24 @@
   version = "v1.0.2"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/streadway/amqp"
+  packages = ["."]
+  revision = "8e4aba63da9fc5571e01c6a45dc809a58cbc5a68"
+
+[[projects]]
+  name = "github.com/stretchr/objx"
+  packages = ["."]
+  revision = "facf9a85c22f48d2f52f2380e4efce1768749a89"
+  version = "v0.1"
+
+[[projects]]
   name = "github.com/stretchr/testify"
-  packages = ["assert"]
+  packages = [
+    "assert",
+    "mock",
+    "require"
+  ]
   revision = "12b6f73e6084dad08a7c6e575284b177ecafbc71"
   version = "v1.2.1"
 
@@ -440,6 +477,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "509272dcb8065c969aa50b0228b7d4c10df068cb7b77aa8a0cf8bf499388775b"
+  inputs-digest = "c6dfd1e91ea4762fbfb618fa2ba83f3dafdd50e5b3a6a85277b069779374584b"
   solver-name = "gps-cdcl"
   solver-version = 1

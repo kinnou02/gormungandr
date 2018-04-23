@@ -49,6 +49,10 @@
   branch = "master"
   name = "github.com/spf13/pflag"
 
+[[constraint]]
+  name = "github.com/rafaeljesus/rabbus"
+  version = "v.2.2"
+
 [prune]
   go-tests = true
   unused-packages = true

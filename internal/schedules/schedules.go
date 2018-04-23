@@ -10,7 +10,8 @@ import (
 	"github.com/CanalTP/gormungandr/serializer"
 	"github.com/gin-gonic/gin"
 	"github.com/golang/protobuf/proto"
-	log "github.com/sirupsen/logrus"
+	"github.com/satori/go.uuid"
+	"github.com/sirupsen/logrus"
 )
 
 type RouteScheduleRequest struct {
@@ -25,6 +26,9 @@ type RouteScheduleRequest struct {
 	ItemsPerSchedule int32     `form:"items_per_schedule"`
 	DataFreshness    string    `form:"data_freshness"`
 	Filters          []string
+	User             gormungandr.User
+	Coverage         string //requested coverage
+	ID               uuid.UUID
 }
 
 func NewRouteScheduleRequest() RouteScheduleRequest {
@@ -39,16 +43,28 @@ func NewRouteScheduleRequest() RouteScheduleRequest {
 	}
 }
 
-func RouteSchedule(c *gin.Context, kraken *gormungandr.Kraken, request *RouteScheduleRequest) {
+func RouteSchedule(c *gin.Context, kraken *gormungandr.Kraken, request *RouteScheduleRequest, publisher Publisher, logger *logrus.Entry) {
 	pbReq := BuildRequestRouteSchedule(*request)
 	resp, err := kraken.Call(pbReq)
+	logger.Debug("calling kraken")
 	if err != nil {
-		log.Errorf("Error while calling kraken: %+v\n", err)
+		logger.Errorf("Error while calling kraken: %+v\n", err)
 		c.JSON(http.StatusServiceUnavailable, gin.H{"error": err})
 		return
 	}
+	logger.Debug("building response")
 	r := serializer.NewRouteSchedulesResponse(resp)
 	c.JSON(http.StatusOK, r)
+	logger.Debug("handling stats")
+
+	go func() {
+		err = publisher.PublishRouteSchedule(*request, *r, *c.Copy())
+		if err != nil {
+			logger.Errorf("stat not sent %+v", err)
+		} else {
+			logger.Debug("stat sent")
+		}
+	}()
 }
 
 func BuildRequestRouteSchedule(req RouteScheduleRequest) *pbnavitia.Request {
