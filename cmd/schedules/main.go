@@ -17,7 +17,6 @@ import (
 	"github.com/CanalTP/gormungandr"
 	"github.com/CanalTP/gormungandr/auth"
 	"github.com/CanalTP/gormungandr/internal/schedules"
-	_ "github.com/lib/pq"
 	"github.com/rafaeljesus/rabbus"
 
 	"github.com/gin-contrib/cors"
@@ -33,6 +32,7 @@ import (
 func setupRouter(config schedules.Config) *gin.Engine {
 	r := gin.New()
 	r.Use(ginrus.Ginrus(logrus.StandardLogger(), time.RFC3339, false))
+	r.Use(gormungandr.InstrumentGin())
 	// Recovery middleware recovers from any panics and writes a 500 if there was one.
 	r.Use(gormungandr.Recovery())
 
@@ -95,7 +95,7 @@ func main() {
 	if !config.SkipAuth {
 		//disable database if authentication isn't used
 		var db *sql.DB
-		db, err = sql.Open("postgres", config.ConnectionString)
+		db, err = sql.Open("postgresInstrumented", config.ConnectionString)
 		if err != nil {
 			logger.Fatal("connection to postgres failed: ", err)
 		}

@@ -112,6 +112,12 @@
   version = "v1.2.0"
 
 [[projects]]
+  name = "github.com/gchaincl/sqlhooks"
+  packages = ["."]
+  revision = "928fba38878d453967fcf9b4a0b7952b90c94d34"
+  version = "v1.1.0"
+
+[[projects]]
   name = "github.com/gin-contrib/cors"
   packages = ["."]
   revision = "cf4846e6a636a76237a28d9286f163c132e841bc"
@@ -284,13 +290,13 @@
   version = "v1.0.0"
 
 [[projects]]
+  branch = "master"
   name = "github.com/prometheus/client_golang"
   packages = [
     "prometheus",
     "prometheus/promhttp"
   ]
-  revision = "c5b7fccd204277076155f10851dad72b76a49317"
-  version = "v0.8.0"
+  revision = "82f5ff156b29e276022b1a958f7d385870fb9814"
 
 [[projects]]
   branch = "master"
@@ -477,6 +483,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "c6dfd1e91ea4762fbfb618fa2ba83f3dafdd50e5b3a6a85277b069779374584b"
+  inputs-digest = "0c4f204f9ce0c75cc02dc359959d418a5b218d6604ddd7b0a06820ad7b581b86"
   solver-name = "gps-cdcl"
   solver-version = 1

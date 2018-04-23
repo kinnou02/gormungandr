@@ -9,8 +9,23 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang/protobuf/proto"
 	"github.com/pkg/errors"
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/rafaeljesus/rabbus"
 )
+
+var (
+	statErrorCounter = prometheus.NewCounter(prometheus.CounterOpts{
+		Namespace: "gormungandr",
+		Subsystem: "stats",
+		Name:      "errors_count",
+		Help:      "stats request errors count",
+	},
+	)
+)
+
+func init() {
+	prometheus.MustRegister(statErrorCounter)
+}
 
 type sender interface {
 	EmitAsync() chan<- rabbus.Message
@@ -98,5 +113,10 @@ func (s *StatPublisher) PublishRouteSchedule(request schedules.RouteScheduleRequ
 	}
 
 	pb := buildStatForRouteSchedule(request, response, c)
-	return s.publish(pb)
+	err := s.publish(pb)
+	if err != nil {
+		statErrorCounter.Inc()
+	}
+
+	return err
 }
