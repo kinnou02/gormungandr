@@ -46,7 +46,7 @@ const authenticationQuery = `
 	SELECT
 		u.id,
 		u.login,
-		k.app_name,
+		coalesce(k.app_name, ''),
 		u.type,
 		e.id,
 		e.name,

@@ -139,7 +139,7 @@ func main() {
 				logrus.Errorf("rabbus.run ended with error: %+v", err)
 			}
 		}()
-		statPublisher = auth.NewStatPublisher(rmq, "test_ex", 2*time.Second)
+		statPublisher = auth.NewStatPublisher(rmq, config.StatsExchange, 2*time.Second)
 	}
 
 	cov.GET("/*filter", schedules.NoRouteHandler(kraken, statPublisher))

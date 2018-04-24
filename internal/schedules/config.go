@@ -23,6 +23,7 @@ func init() {
 	pflag.String("newrelic-license", "", "license key new relic")
 	pflag.String("newrelic-appname", "gormungandr", "application name in new relic")
 	pflag.StringP("rabbitmq-dsn", "r", "amqp://guest:guest@localhost:5672/", "connection uri for rabbitmq")
+	pflag.String("stats-exchange", "stat_persistor_exchange_topic", "exchange where to send stats")
 	pflag.Bool("skip-stats", false, "disable statistics")
 }
 
@@ -37,6 +38,7 @@ type Config struct {
 	NewRelicLicense  string `mapstructure:"newrelic-license"`
 	NewRelicAppName  string `mapstructure:"newrelic-appname"`
 	RabbitmqDsn      string `mapstructure:"rabbitmq-dsn"`
+	StatsExchange    string `mapstructure:"stats-exchange"`
 	SkipStats        bool   `mapstructure:"skip-stats"`
 }
 
