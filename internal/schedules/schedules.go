@@ -53,7 +53,7 @@ func RouteSchedule(c *gin.Context, kraken *gormungandr.Kraken, request *RouteSch
 		return
 	}
 	logger.Debug("building response")
-	r := serializer.NewRouteSchedulesResponse(resp)
+	r := serializer.NewRouteSchedulesResponse(pbReq, resp)
 	c.JSON(http.StatusOK, r)
 	logger.Debug("handling stats")
 

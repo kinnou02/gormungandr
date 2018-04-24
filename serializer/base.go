@@ -2,6 +2,7 @@ package serializer
 
 import (
 	"strings"
+	"time"
 
 	"github.com/CanalTP/gonavitia"
 	"github.com/CanalTP/gonavitia/pbnavitia"
@@ -83,6 +84,16 @@ func NewCoord(pb *pbnavitia.GeographicalCoord) *gonavitia.Coord {
 		Lon: pb.GetLon(),
 	}
 	return &coord
+}
+
+func NewContext(request *pbnavitia.Request, pb *pbnavitia.Response) *gonavitia.Context {
+	if pb == nil || request == nil || pb.Metadatas == nil {
+		return nil
+	}
+	return &gonavitia.Context{
+		CurrentDatetime: gonavitia.NavitiaDatetime(time.Unix(int64(request.GetXCurrentDatetime()), 0)),
+		Timezone:        pb.Metadatas.GetTimezone(),
+	}
 }
 
 func NewStopPoint(pb *pbnavitia.StopPoint) *gonavitia.StopPoint {

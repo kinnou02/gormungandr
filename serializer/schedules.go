@@ -9,7 +9,7 @@ import (
 	"github.com/golang/protobuf/proto"
 )
 
-func NewRouteSchedulesResponse(pb *pbnavitia.Response) *gonavitia.RouteScheduleResponse {
+func NewRouteSchedulesResponse(request *pbnavitia.Request, pb *pbnavitia.Response) *gonavitia.RouteScheduleResponse {
 	if pb == nil {
 		return nil
 	}
@@ -18,7 +18,11 @@ func NewRouteSchedulesResponse(pb *pbnavitia.Response) *gonavitia.RouteScheduleR
 		RouteSchedules: make([]*gonavitia.RouteSchedule, 0, len(pb.RouteSchedules)),
 		Pagination:     NewPagination(pb.Pagination),
 		FeedPublishers: make([]*gonavitia.FeedPublisher, 0, len(pb.FeedPublishers)),
+		Links:          make([]gonavitia.Link, 0),
+		Context:        NewContext(request, pb),
 		Exceptions:     make([]struct{}, 0),
+		Notes:          make([]struct{}, 0),
+		Disruptions:    make([]struct{}, 0),
 	}
 	for _, r := range pb.RouteSchedules {
 		response.RouteSchedules = append(response.RouteSchedules, NewRouteSchedule(r))
