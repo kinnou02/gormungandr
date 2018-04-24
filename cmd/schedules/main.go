@@ -20,6 +20,7 @@ import (
 	"github.com/rafaeljesus/rabbus"
 
 	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/location"
 	"github.com/gin-gonic/contrib/ginrus"
 	"github.com/gin-gonic/gin"
 	"github.com/newrelic/go-agent"
@@ -41,6 +42,10 @@ func setupRouter(config schedules.Config) *gin.Engine {
 		AllowHeaders:     []string{"Access-Control-Request-Headers", "Authorization"},
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
+	}))
+	r.Use(location.New(location.Config{
+		Scheme: "http",
+		Host:   "navitia.io",
 	}))
 
 	if len(config.NewRelicLicense) > 0 {
