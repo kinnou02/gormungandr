@@ -2,6 +2,7 @@ package serializer
 
 import (
 	"strings"
+	"time"
 
 	"github.com/CanalTP/gonavitia"
 	"github.com/CanalTP/gonavitia/pbnavitia"
@@ -85,20 +86,32 @@ func NewCoord(pb *pbnavitia.GeographicalCoord) *gonavitia.Coord {
 	return &coord
 }
 
+func NewContext(request *pbnavitia.Request, pb *pbnavitia.Response) *gonavitia.Context {
+	if pb == nil || request == nil || pb.Metadatas == nil {
+		return nil
+	}
+	return &gonavitia.Context{
+		CurrentDatetime: gonavitia.NavitiaDatetime(time.Unix(int64(request.GetXCurrentDatetime()), 0)),
+		Timezone:        pb.Metadatas.GetTimezone(),
+	}
+}
+
 func NewStopPoint(pb *pbnavitia.StopPoint) *gonavitia.StopPoint {
 	if pb == nil {
 		return nil
 	}
 	sp := gonavitia.StopPoint{
-		Id:         pb.Uri,
-		Name:       pb.Name,
-		Label:      pb.Label,
-		Coord:      NewCoord(pb.Coord),
-		Admins:     make([]*gonavitia.Admin, 0, len(pb.AdministrativeRegions)),
-		StopArea:   NewStopArea(pb.StopArea),
-		Codes:      make([]*gonavitia.Code, 0, len(pb.Codes)),
-		Equipments: NewEquipments(pb.HasEquipments),
-		Links:      make([]*gonavitia.Link, 0),
+		Id:              pb.Uri,
+		Name:            pb.Name,
+		Label:           pb.Label,
+		Coord:           NewCoord(pb.Coord),
+		Admins:          make([]*gonavitia.Admin, 0, len(pb.AdministrativeRegions)),
+		StopArea:        NewStopArea(pb.StopArea),
+		Codes:           make([]*gonavitia.Code, 0, len(pb.Codes)),
+		Equipments:      NewEquipments(pb.HasEquipments),
+		Links:           make([]*gonavitia.Link, 0),
+		PhysicalModes:   NewPhysicalModes(pb.PhysicalModes),
+		CommercialModes: NewCommercialModes(pb.CommercialModes),
 	}
 	for _, pb_admin := range pb.AdministrativeRegions {
 		sp.Admins = append(sp.Admins, NewAdmin(pb_admin))
@@ -114,14 +127,16 @@ func NewStopArea(pb *pbnavitia.StopArea) *gonavitia.StopArea {
 		return nil
 	}
 	sa := gonavitia.StopArea{
-		Id:       pb.Uri,
-		Name:     pb.Name,
-		Label:    pb.Label,
-		Timezone: pb.Timezone,
-		Coord:    NewCoord(pb.Coord),
-		Admins:   make([]*gonavitia.Admin, 0, len(pb.AdministrativeRegions)),
-		Codes:    make([]*gonavitia.Code, 0, len(pb.Codes)),
-		Links:    make([]*gonavitia.Link, 0),
+		Id:              pb.Uri,
+		Name:            pb.Name,
+		Label:           pb.Label,
+		Timezone:        pb.Timezone,
+		Coord:           NewCoord(pb.Coord),
+		Admins:          make([]*gonavitia.Admin, 0, len(pb.AdministrativeRegions)),
+		Codes:           make([]*gonavitia.Code, 0, len(pb.Codes)),
+		Links:           make([]*gonavitia.Link, 0),
+		PhysicalModes:   NewPhysicalModes(pb.PhysicalModes),
+		CommercialModes: NewCommercialModes(pb.CommercialModes),
 	}
 	for _, pb_admin := range pb.AdministrativeRegions {
 		sa.Admins = append(sa.Admins, NewAdmin(pb_admin))

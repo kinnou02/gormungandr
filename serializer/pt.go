@@ -69,3 +69,37 @@ func NewEquipments(pb *pbnavitia.HasEquipments) []string {
 	}
 	return equipments
 }
+
+func NewPhysicalModes(pb []*pbnavitia.PhysicalMode) []gonavitia.PhysicalMode {
+	slice := make([]gonavitia.PhysicalMode, 0, len(pb))
+	for _, v := range pb {
+		if v != nil {
+			slice = append(slice, NewPhysicalMode(*v))
+		}
+	}
+	return slice
+}
+
+func NewPhysicalMode(pb pbnavitia.PhysicalMode) gonavitia.PhysicalMode {
+	return gonavitia.PhysicalMode{
+		Id:   pb.GetUri(),
+		Name: pb.GetName(),
+	}
+}
+
+func NewCommercialModes(pb []*pbnavitia.CommercialMode) []gonavitia.CommercialMode {
+	slice := make([]gonavitia.CommercialMode, 0, len(pb))
+	for _, v := range pb {
+		if v != nil {
+			slice = append(slice, NewCommercialMode(*v))
+		}
+	}
+	return slice
+}
+
+func NewCommercialMode(pb pbnavitia.CommercialMode) gonavitia.CommercialMode {
+	return gonavitia.CommercialMode{
+		Id:   pb.GetUri(),
+		Name: pb.GetName(),
+	}
+}

@@ -2,12 +2,16 @@ package schedules
 
 import (
 	"net/http"
+	"net/url"
+	"strconv"
 	"strings"
 	"time"
 
+	"github.com/CanalTP/gonavitia"
 	"github.com/CanalTP/gonavitia/pbnavitia"
 	"github.com/CanalTP/gormungandr"
 	"github.com/CanalTP/gormungandr/serializer"
+	"github.com/gin-contrib/location"
 	"github.com/gin-gonic/gin"
 	"github.com/golang/protobuf/proto"
 	"github.com/satori/go.uuid"
@@ -53,7 +57,8 @@ func RouteSchedule(c *gin.Context, kraken *gormungandr.Kraken, request *RouteSch
 		return
 	}
 	logger.Debug("building response")
-	r := serializer.NewRouteSchedulesResponse(resp)
+	r := serializer.NewRouteSchedulesResponse(pbReq, resp)
+	fillPaginationLinks(getUrl(c), r)
 	c.JSON(http.StatusOK, r)
 	logger.Debug("handling stats")
 
@@ -90,4 +95,56 @@ func BuildRequestRouteSchedule(req RouteScheduleRequest) *pbnavitia.Request {
 	pbReq.NextStopTimes.ForbiddenUri = append(pbReq.NextStopTimes.ForbiddenUri, req.ForbiddenUris...)
 
 	return pbReq
+}
+
+func getUrl(c *gin.Context) *url.URL {
+	u := location.Get(c)
+	u.RawQuery = c.Request.URL.RawQuery
+	u.Path = c.Request.URL.Path
+	return u
+}
+
+func fillPaginationLinks(url *url.URL, response *gonavitia.RouteScheduleResponse) {
+	if response == nil || response.Pagination == nil {
+		return
+	}
+	pagination := *response.Pagination
+	values := url.Query()
+	if pagination.StartPage > 0 {
+		values.Set("start_page", strconv.Itoa(int(pagination.StartPage-1)))
+		url.RawQuery = values.Encode()
+		response.Links = append(response.Links, gonavitia.Link{
+			Href:      proto.String(url.String()),
+			Type:      proto.String("previous"),
+			Templated: proto.Bool(false),
+		})
+	}
+
+	if pagination.TotalResult > (pagination.StartPage+1)*pagination.ItemsPerPage {
+		values.Set("start_page", strconv.Itoa(int(pagination.StartPage+1)))
+		url.RawQuery = values.Encode()
+		response.Links = append(response.Links, gonavitia.Link{
+			Href:      proto.String(url.String()),
+			Type:      proto.String("next"),
+			Templated: proto.Bool(false),
+		})
+	}
+
+	if pagination.ItemsPerPage > 0 && pagination.TotalResult > 0 {
+		lastPage := (pagination.TotalResult - 1) / pagination.ItemsPerPage
+		values.Set("start_page", strconv.Itoa(int(lastPage)))
+		url.RawQuery = values.Encode()
+		response.Links = append(response.Links, gonavitia.Link{
+			Href:      proto.String(url.String()),
+			Type:      proto.String("last"),
+			Templated: proto.Bool(false),
+		})
+	}
+	values.Del("start_page")
+	url.RawQuery = values.Encode()
+	response.Links = append(response.Links, gonavitia.Link{
+		Href:      proto.String(url.String()),
+		Type:      proto.String("first"),
+		Templated: proto.Bool(false),
+	})
 }
