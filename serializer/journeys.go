@@ -125,7 +125,7 @@ func NewLinksFromUris(pb *pbnavitia.PtDisplayInfo) []gonavitia.Link {
 	res = appendLinksFromUri(uris.Route, "route", &res)
 	res = appendLinksFromUri(uris.CommercialMode, "commercial_mode", &res)
 	res = appendLinksFromUri(uris.PhysicalMode, "physical_mode", &res)
-	res = appendLinksFromUri(uris.Network, "Network", &res)
+	res = appendLinksFromUri(uris.Network, "network", &res)
 	res = appendLinksFromUri(uris.Note, "note", &res)
 	res = appendLinksFromUri(uris.JourneyPattern, "journey_pattern", &res)
 	return res
