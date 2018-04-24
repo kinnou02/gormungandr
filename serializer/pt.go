@@ -12,11 +12,11 @@ func NewPtDisplayInfoForRoute(pb *pbnavitia.PtDisplayInfo) *gonavitia.PtDisplayI
 	if pb == nil {
 		return nil
 	}
-	var label string
+	var label *string
 	if code := pb.GetCode(); len(code) > 0 {
-		label = code
+		label = &code
 	} else {
-		label = pb.GetName()
+		label = pb.Name
 	}
 	info := gonavitia.PtDisplayInfo{
 		Direction:      pb.GetDirection(),
