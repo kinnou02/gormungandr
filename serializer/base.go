@@ -112,6 +112,7 @@ func NewStopPoint(pb *pbnavitia.StopPoint) *gonavitia.StopPoint {
 		Links:           make([]*gonavitia.Link, 0),
 		PhysicalModes:   NewPhysicalModes(pb.PhysicalModes),
 		CommercialModes: NewCommercialModes(pb.CommercialModes),
+		Address:         NewAddress(pb.Address),
 	}
 	for _, pb_admin := range pb.AdministrativeRegions {
 		sp.Admins = append(sp.Admins, NewAdmin(pb_admin))
