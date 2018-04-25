@@ -59,7 +59,25 @@ func setupRouter(config schedules.Config) *gin.Engine {
 
 	r.GET("/metrics", gin.WrapH(promhttp.Handler()))
 
+	r.GET("/", Index)
+	r.GET("/status", Status)
+
 	return r
+}
+
+func Index(c *gin.Context) {
+	//this is temporary, but our LB except this to work...
+	c.JSON(200, gin.H{
+		"versions": "",
+	})
+}
+
+func Status(c *gin.Context) {
+	c.JSON(200, gin.H{
+		"status":  "ok",
+		"version": gormungandr.Version,
+		"runtime": runtime.Version(),
+	})
 }
 
 func initLog(jsonLog bool) {
