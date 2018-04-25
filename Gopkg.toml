@@ -61,6 +61,11 @@
   name = "github.com/prometheus/client_golang"
   branch = "master"
 
+[[constraint]]
+  name = "github.com/gin-contrib/location"
+  branch = "fix-host"
+  source = "github.com/kinnou02/location"
+
 [prune]
   go-tests = true
   unused-packages = true
