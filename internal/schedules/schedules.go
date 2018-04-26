@@ -59,7 +59,11 @@ func RouteSchedule(c *gin.Context, kraken *gormungandr.Kraken, request *RouteSch
 	logger.Debug("building response")
 	r := serializer.NewRouteSchedulesResponse(pbReq, resp)
 	fillPaginationLinks(getUrl(c), r)
-	c.JSON(http.StatusOK, r)
+	status := http.StatusOK
+	if r.Error != nil {
+		status = r.Error.Code.HTTPCode()
+	}
+	c.JSON(status, r)
 	logger.Debug("handling stats")
 
 	go func() {
