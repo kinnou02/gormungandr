@@ -36,6 +36,11 @@ func NoRouteHandler(kraken *gormungandr.Kraken, publisher Publisher) gin.Handler
 			if user, ok := gormungandr.GetUser(c); ok {
 				request.User = user
 			}
+			if len(request.Filters) < 1 {
+				c.JSON(http.StatusNotFound, gin.H{"message": "at least one filter is required"})
+				return
+			}
+
 			request.Coverage = c.Param("coverage")
 			RouteSchedule(c, kraken, &request, publisher, logger)
 		} else {
