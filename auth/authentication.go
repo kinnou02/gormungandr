@@ -8,7 +8,6 @@ import (
 	"github.com/CanalTP/gormungandr"
 	cache "github.com/patrickmn/go-cache"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 )
 
 var (
