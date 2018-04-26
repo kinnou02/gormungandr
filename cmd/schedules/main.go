@@ -17,6 +17,7 @@ import (
 	"github.com/CanalTP/gormungandr"
 	"github.com/CanalTP/gormungandr/auth"
 	"github.com/CanalTP/gormungandr/internal/schedules"
+	cache "github.com/patrickmn/go-cache"
 	"github.com/rafaeljesus/rabbus"
 
 	"github.com/gin-contrib/cors"
@@ -99,7 +100,10 @@ func main() {
 
 	if !config.SkipAuth {
 		//disable database if authentication isn't used
-		var db *sql.DB
+		var (
+			db        *sql.DB
+			authCache *cache.Cache
+		)
 		db, err = sql.Open("postgresInstrumented", config.ConnectionString)
 		if err != nil {
 			logger.Fatal("connection to postgres failed: ", err)
@@ -108,8 +112,9 @@ func main() {
 		if err != nil {
 			logger.Fatal("connection to postgres failed: ", err)
 		}
+		authCache = cache.New(300*time.Second, 600*time.Second)
 
-		cov.Use(auth.AuthenticationMiddleware(db))
+		cov.Use(auth.AuthenticationMiddleware(db, authCache))
 	}
 
 	if len(config.PprofListen) != 0 {

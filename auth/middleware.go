@@ -6,6 +6,7 @@ import (
 
 	"github.com/CanalTP/gormungandr"
 	"github.com/gin-gonic/gin"
+	cache "github.com/patrickmn/go-cache"
 	"github.com/sirupsen/logrus"
 )
 
@@ -20,13 +21,13 @@ func getToken(c *gin.Context) string {
 	}
 }
 
-func AuthenticationMiddleware(db *sql.DB) gin.HandlerFunc {
+func AuthenticationMiddleware(db *sql.DB, authCache *cache.Cache) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		middleware(c, db)
+		middleware(c, db, authCache)
 	}
 }
 
-func middleware(c *gin.Context, db *sql.DB) {
+func middleware(c *gin.Context, db *sql.DB, authCache *cache.Cache) {
 	coverage := c.Param("coverage")
 	token := getToken(c)
 	logger := logrus.WithFields(logrus.Fields{
@@ -39,15 +40,15 @@ func middleware(c *gin.Context, db *sql.DB) {
 		c.AbortWithStatusJSON(401, gin.H{"message": "no token"})
 		return
 	}
-	user, err := Authenticate(token, time.Now(), db)
-	if err == AuthenticationFailed {
+	user, err := CachedAuthenticate(token, time.Now(), db, authCache)
+	if err == ErrAuthenticationFailed {
 		c.Header("WWW-Authenticate", "basic realm=\"Token Required\"")
 		c.AbortWithStatusJSON(401, gin.H{"message": "authentication failed"})
 		return
 	} else if err != nil {
 		panic(err)
 	}
-	ok, err := IsAuthorized(user, coverage, db)
+	ok, err := CachedIsAuthorized(user, coverage, db, authCache)
 	if err != nil {
 		panic(err)
 	}

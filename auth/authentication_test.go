@@ -59,7 +59,7 @@ func TestAuthenticate(t *testing.T) {
 	db, mock := newMock()
 	defer db.Close()
 	mock = expectAuthSuccess(mock)
-	user, err := Authenticate("mytoken", time.Now(), db)
+	user, err := authenticate("mytoken", time.Now(), db)
 	assert.Nil(t, err)
 	assert.Nil(t, mock.ExpectationsWereMet())
 	assert.Equal(t, "mylogin", user.Username)
@@ -76,10 +76,10 @@ func TestAuthenticateFail(t *testing.T) {
 	db, mock := newMock()
 	defer db.Close()
 	mock = expectAuthNoResult(mock)
-	_, err := Authenticate("mytoken", time.Now(), db)
+	_, err := authenticate("mytoken", time.Now(), db)
 	assert.NotNil(t, err)
 	assert.Nil(t, mock.ExpectationsWereMet())
-	assert.Equal(t, AuthenticationFailed, err)
+	assert.Equal(t, ErrAuthenticationFailed, err)
 }
 
 func TestAuthenticateError(t *testing.T) {
@@ -87,7 +87,7 @@ func TestAuthenticateError(t *testing.T) {
 	db, mock := newMock()
 	defer db.Close()
 	mock = expectAuthError(mock)
-	_, err := Authenticate("mytoken", time.Now(), db)
+	_, err := authenticate("mytoken", time.Now(), db)
 	assert.NotNil(t, err)
 	assert.Nil(t, mock.ExpectationsWereMet())
 }
@@ -103,7 +103,7 @@ func TestIsAuthorized(t *testing.T) {
 		Type: "with_free_instances",
 	}
 
-	result, err := IsAuthorized(user, "fr-idf", db)
+	result, err := isAuthorized(user, "fr-idf", db)
 	assert.Nil(t, err)
 	assert.Nil(t, mock.ExpectationsWereMet())
 	assert.Equal(t, true, result)
@@ -119,7 +119,7 @@ func TestIsAuthorizedSuperuser(t *testing.T) {
 		Type: "super_user",
 	}
 
-	result, err := IsAuthorized(user, "fr-idf", db)
+	result, err := isAuthorized(user, "fr-idf", db)
 	assert.Nil(t, err)
 	assert.Nil(t, mock.ExpectationsWereMet())
 	assert.Equal(t, true, result)
@@ -136,7 +136,7 @@ func TestIsAuthorizedFailed(t *testing.T) {
 		Type: "with_free_instances",
 	}
 
-	result, err := IsAuthorized(user, "fr-idf", db)
+	result, err := isAuthorized(user, "fr-idf", db)
 	assert.Nil(t, err)
 	assert.Nil(t, mock.ExpectationsWereMet())
 	assert.Equal(t, false, result)
@@ -153,7 +153,7 @@ func TestIsAuthorizedError(t *testing.T) {
 		Type: "with_free_instances",
 	}
 
-	_, err := IsAuthorized(user, "fr-idf", db)
+	_, err := isAuthorized(user, "fr-idf", db)
 	assert.NotNil(t, err)
 	assert.Nil(t, mock.ExpectationsWereMet())
 }
