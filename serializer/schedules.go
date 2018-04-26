@@ -9,6 +9,8 @@ import (
 	"github.com/golang/protobuf/proto"
 )
 
+const maxUInt64 = 18446744073709551615
+
 func NewRouteSchedulesResponse(request *pbnavitia.Request, pb *pbnavitia.Response) *gonavitia.RouteScheduleResponse {
 	if pb == nil {
 		return nil
@@ -99,12 +101,21 @@ func NewDatetime(pb *pbnavitia.ScheduleStopTime) gonavitia.DateTime {
 	if pb == nil {
 		return gonavitia.DateTime{}
 	}
+	if pb.GetTime() == maxUInt64 {
+		//This is an "empty" datetime cell in the response
+		return gonavitia.DateTime{
+			AdditionalInfo: make([]string, 0),
+			Links:          make([]gonavitia.Link, 0),
+		}
+	}
+
 	rtLevel := strings.ToLower(pb.GetRealtimeLevel().Enum().String())
+	baseDateTime := gonavitia.NavitiaDatetime(time.Unix(int64(pb.GetBaseDateTime()), 0))
 	return gonavitia.DateTime{
 		DateTime:       gonavitia.NavitiaDatetime(time.Unix(int64(pb.GetDate()+pb.GetTime()), 0)),
-		BaseDateTime:   gonavitia.NavitiaDatetime(time.Unix(int64(pb.GetBaseDateTime()), 0)),
+		BaseDateTime:   &baseDateTime,
 		AdditionalInfo: make([]string, 0),
-		DataFreshness:  rtLevel,
+		DataFreshness:  &rtLevel,
 		Links:          NewLinksFromProperties(pb.Properties),
 	}
 }
