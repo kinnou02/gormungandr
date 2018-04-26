@@ -19,7 +19,7 @@ import (
 )
 
 type RouteScheduleRequest struct {
-	FromDatetime     time.Time `form:"from_datetime" time_format:"20060102T150405" binding:"required"`
+	FromDatetime     time.Time `form:"from_datetime" time_format:"20060102T150405"`
 	DisableGeojson   bool      `form:"disable_geojson"`
 	StartPage        int32     `form:"start_page"`
 	Count            int32     `form:"count"`
@@ -44,6 +44,7 @@ func NewRouteScheduleRequest() RouteScheduleRequest {
 		Depth:            2,
 		ItemsPerSchedule: 10000,
 		DataFreshness:    "base_schedudle",
+		FromDatetime:     time.Now(),
 	}
 }
 
@@ -59,7 +60,11 @@ func RouteSchedule(c *gin.Context, kraken *gormungandr.Kraken, request *RouteSch
 	logger.Debug("building response")
 	r := serializer.NewRouteSchedulesResponse(pbReq, resp)
 	fillPaginationLinks(getUrl(c), r)
-	c.JSON(http.StatusOK, r)
+	status := http.StatusOK
+	if r.Error != nil {
+		status = r.Error.Code.HTTPCode()
+	}
+	c.JSON(status, r)
 	logger.Debug("handling stats")
 
 	go func() {

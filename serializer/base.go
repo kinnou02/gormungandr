@@ -8,17 +8,6 @@ import (
 	"github.com/CanalTP/gonavitia/pbnavitia"
 )
 
-func NewError(pb *pbnavitia.Error) *gonavitia.Error {
-	if pb == nil {
-		return nil
-	}
-	id := pb.Id.Enum().String()
-	return &gonavitia.Error{
-		Id:      &id,
-		Message: pb.Message,
-	}
-}
-
 func NewPagination(pb *pbnavitia.Pagination) *gonavitia.Pagination {
 	if pb == nil {
 		return nil
