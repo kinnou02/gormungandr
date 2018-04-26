@@ -112,7 +112,10 @@ func main() {
 		if err != nil {
 			logger.Fatal("connection to postgres failed: ", err)
 		}
-		authCache = cache.New(300*time.Second, 600*time.Second)
+		if config.AuthCacheTimeout.Seconds() > 0 {
+			logger.Info("Activate authentication cache")
+			authCache = cache.New(config.AuthCacheTimeout, config.AuthCacheTimeout*2)
+		}
 
 		cov.Use(auth.AuthenticationMiddleware(db, authCache))
 	}
