@@ -272,6 +272,12 @@
   version = "v0.1.1"
 
 [[projects]]
+  name = "github.com/patrickmn/go-cache"
+  packages = ["."]
+  revision = "a3647f8e31d79543b2d0f0ae2fe5c379d72cedc0"
+  version = "v2.1.0"
+
+[[projects]]
   branch = "master"
   name = "github.com/pebbe/zmq4"
   packages = ["."]
@@ -489,6 +495,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "ce18e72781d432abce0feb4f9d88e260e5e69204d3526ca607f033a559eee66a"
+  inputs-digest = "d5e4863bd31b19b788322c7b5dff5686f39f2e4d76091b7a50d75704f0128341"
   solver-name = "gps-cdcl"
   solver-version = 1

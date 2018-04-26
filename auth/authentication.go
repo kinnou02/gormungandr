@@ -2,31 +2,90 @@ package auth
 
 import (
 	"database/sql"
+	"fmt"
 	"time"
 
 	"github.com/CanalTP/gormungandr"
+	cache "github.com/patrickmn/go-cache"
 	"github.com/pkg/errors"
 )
 
 var (
-	AuthenticationFailed = errors.New("Authentication failed")
+	ErrAuthenticationFailed = errors.New("Authentication failed")
 )
 
-//return AuthenticationFailed if the the authentication fail
-func Authenticate(token string, now time.Time, db *sql.DB) (user gormungandr.User, err error) {
+type authResult struct {
+	user gormungandr.User
+	err  error
+}
+
+func getAuthKey(token string) string {
+	return fmt.Sprintf("auth.CachedAuthenticate#%v", token)
+}
+
+// return AuthenticationFailed if the authentication fail
+// triggers cache only if cache structure is provided
+func CachedAuthenticate(token string, now time.Time, db *sql.DB, authCache *cache.Cache) (user gormungandr.User, err error) {
+	if authCache == nil {
+		return authenticate(token, now, db)
+	}
+
+	var k = getAuthKey(token)
+	authRes, found := authCache.Get(k)
+	if found {
+		return authRes.(*authResult).user, authRes.(*authResult).err
+	}
+
+	user, err = authenticate(token, now, db)
+
+	if err == nil || err == ErrAuthenticationFailed {
+		authCache.SetDefault(k, &authResult{user, err})
+	}
+	return user, err
+}
+
+func authenticate(token string, now time.Time, db *sql.DB) (user gormungandr.User, err error) {
 	row := db.QueryRow(authenticationQuery, token, now)
 	err = row.Scan(&user.Id, &user.Username, &user.AppName, &user.Type, &user.EndPointId, &user.EndPointName, &user.Token)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return user, AuthenticationFailed
-		} else {
-			return user, errors.Wrap(err, "error while authentication")
+			return user, ErrAuthenticationFailed
 		}
+		return user, errors.Wrap(err, "error while authentication")
 	}
 	return user, nil
 }
 
-func IsAuthorized(user gormungandr.User, coverage string, db *sql.DB) (result bool, err error) {
+type isAuthorizedResult struct {
+	isAuthorized bool
+	err          error
+}
+
+func getIsAuthorizedKey(coverage string, userId int) string {
+	return fmt.Sprintf("auth.CachedIsAuthorized#%v#%v", coverage, userId)
+}
+
+// triggers cache only if cache structure is provided
+func CachedIsAuthorized(user gormungandr.User, coverage string, db *sql.DB, authCache *cache.Cache) (result bool, err error) {
+	if authCache == nil {
+		return isAuthorized(user, coverage, db)
+	}
+
+	var k = getIsAuthorizedKey(coverage, user.Id)
+	isAuthorizedRes, found := authCache.Get(k)
+	if found {
+		return isAuthorizedRes.(*isAuthorizedResult).isAuthorized, isAuthorizedRes.(*isAuthorizedResult).err
+	}
+
+	result, err = isAuthorized(user, coverage, db)
+
+	if err == nil {
+		authCache.SetDefault(k, &isAuthorizedResult{result, err})
+	}
+	return result, err
+}
+
+func isAuthorized(user gormungandr.User, coverage string, db *sql.DB) (result bool, err error) {
 	if user.Type == "super_user" {
 		return true, nil
 	}
@@ -35,9 +94,8 @@ func IsAuthorized(user gormungandr.User, coverage string, db *sql.DB) (result bo
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return false, nil
-		} else {
-			return false, errors.Wrap(err, "error while IsAuthorized")
 		}
+		return false, errors.Wrap(err, "error while IsAuthorized")
 	}
 	return result, nil
 }

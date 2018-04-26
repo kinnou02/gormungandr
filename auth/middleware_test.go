@@ -3,9 +3,11 @@ package auth
 import (
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/CanalTP/gormungandr"
 	"github.com/gin-gonic/gin"
+	cache "github.com/patrickmn/go-cache"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -67,7 +69,7 @@ func TestMiddlewareNoToken(t *testing.T) {
 	c.Request = httptest.NewRequest("Get", "/coverage/fr-idf", nil)
 	db, mock := newMock()
 	defer db.Close()
-	middleware(c, db)
+	middleware(c, db, nil)
 	assert.True(t, c.IsAborted())
 	assert.Nil(t, mock.ExpectationsWereMet())
 	_, ok := gormungandr.GetUser(c)
@@ -84,7 +86,7 @@ func TestMiddlewareAuthFail(t *testing.T) {
 	db, mock := newMock()
 	defer db.Close()
 	mock = expectAuthNoResult(mock)
-	middleware(c, db)
+	middleware(c, db, nil)
 	assert.True(t, c.IsAborted())
 	assert.Nil(t, mock.ExpectationsWereMet())
 	_, ok := gormungandr.GetUser(c)
@@ -101,8 +103,8 @@ func TestMiddlewareNotAuthorized(t *testing.T) {
 	db, mock := newMock()
 	defer db.Close()
 	mock = expectAuthSuccess(mock)
-	mock = expectIsAuthorizeNoResult(mock)
-	middleware(c, db)
+	mock = expectIsAuthorizedNoResult(mock)
+	middleware(c, db, nil)
 	assert.True(t, c.IsAborted())
 	assert.Nil(t, mock.ExpectationsWereMet())
 	_, ok := gormungandr.GetUser(c)
@@ -119,8 +121,8 @@ func TestMiddlewareAuthorized(t *testing.T) {
 	db, mock := newMock()
 	defer db.Close()
 	mock = expectAuthSuccess(mock)
-	mock = expectIsAuthorizeSuccess(mock)
-	middleware(c, db)
+	mock = expectIsAuthorizedSuccess(mock)
+	middleware(c, db, nil)
 	assert.False(t, c.IsAborted())
 	assert.Nil(t, mock.ExpectationsWereMet())
 	user, ok := gormungandr.GetUser(c)
@@ -130,4 +132,37 @@ func TestMiddlewareAuthorized(t *testing.T) {
 	coverage, ok := gormungandr.GetCoverage(c)
 	assert.True(t, ok)
 	assert.Equal(t, "", coverage) //no router is defined so the coverage from the query isn't parsed
+}
+
+// test cached middleware roughly
+func TestCachedMiddlewareAuthorized(t *testing.T) {
+	t.Parallel()
+	c, _ := gin.CreateTestContext(httptest.NewRecorder())
+	c.Request = httptest.NewRequest("Get", "/coverage/fr-idf", nil)
+	c.Request.SetBasicAuth("mykey", "")
+	db, mock := newMock()
+	defer db.Close()
+	mock = expectAuthSuccess(mock)
+	mock = expectIsAuthorizedSuccess(mock)
+	authCache := cache.New(300*time.Second, 600*time.Second)
+
+	middleware(c, db, authCache)
+	assert.False(t, c.IsAborted())
+	user, ok := gormungandr.GetUser(c)
+	assert.True(t, ok)
+	assert.Equal(t, "mylogin", user.Username)
+	coverage, ok := gormungandr.GetCoverage(c)
+	assert.True(t, ok)
+	assert.Equal(t, "", coverage)
+
+	middleware(c, db, authCache)
+	assert.False(t, c.IsAborted())
+	user, ok = gormungandr.GetUser(c)
+	assert.True(t, ok)
+	assert.Equal(t, "mylogin", user.Username)
+	coverage, ok = gormungandr.GetCoverage(c)
+	assert.True(t, ok)
+	assert.Equal(t, "", coverage)
+
+	assert.Nil(t, mock.ExpectationsWereMet())
 }

@@ -68,10 +68,10 @@ func TestRealAuthenticate(t *testing.T) {
 		t.Skip("skipping test Docker in short mode.")
 	}
 	t.Parallel()
-	_, err := Authenticate("thisIsNotAkey", time.Now(), dockerDB)
-	assert.Equal(t, AuthenticationFailed, err)
+	_, err := authenticate("thisIsNotAkey", time.Now(), dockerDB)
+	assert.Equal(t, ErrAuthenticationFailed, err)
 
-	user, err := Authenticate("115aa17b-63d3-4a31-acd6-edebebd4d415", time.Now(), dockerDB)
+	user, err := authenticate("115aa17b-63d3-4a31-acd6-edebebd4d415", time.Now(), dockerDB)
 	assert.Nil(t, err)
 	assert.Equal(t, "testuser", user.Username)
 	assert.Equal(t, 1, user.Id)
@@ -82,17 +82,17 @@ func TestRealAuthenticate(t *testing.T) {
 	assert.Equal(t, 1, user.EndPointId)
 
 	//fr-idf is in opendata
-	ok, err := IsAuthorized(user, "fr-idf", dockerDB)
+	ok, err := isAuthorized(user, "fr-idf", dockerDB)
 	assert.Nil(t, err)
 	assert.True(t, ok)
 
 	//Transilien is private but we have the authorization to use it
-	ok, err = IsAuthorized(user, "transilien", dockerDB)
+	ok, err = isAuthorized(user, "transilien", dockerDB)
 	assert.Nil(t, err)
 	assert.True(t, ok)
 
 	//sncf is private And we don't have any authorization on it
-	ok, err = IsAuthorized(user, "sncf", dockerDB)
+	ok, err = isAuthorized(user, "sncf", dockerDB)
 	assert.Nil(t, err)
 	assert.False(t, ok)
 }

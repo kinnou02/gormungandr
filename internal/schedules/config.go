@@ -25,21 +25,23 @@ func init() {
 	pflag.StringP("rabbitmq-dsn", "r", "amqp://guest:guest@localhost:5672/", "connection uri for rabbitmq")
 	pflag.String("stats-exchange", "stat_persistor_exchange_topic", "exchange where to send stats")
 	pflag.Bool("skip-stats", false, "disable statistics")
+	pflag.Duration("auth-cache-timeout", 0, "timeout for cache on authentication calls to db")
 }
 
 type Config struct {
 	Listen           string
 	Timeout          time.Duration
 	Kraken           string
-	PprofListen      string `mapstructure:"pprof-listen"`
-	JSONLog          bool   `mapstructure:"json-log"`
-	ConnectionString string `mapstructure:"connection-string"`
-	SkipAuth         bool   `mapstructure:"skip-auth"`
-	NewRelicLicense  string `mapstructure:"newrelic-license"`
-	NewRelicAppName  string `mapstructure:"newrelic-appname"`
-	RabbitmqDsn      string `mapstructure:"rabbitmq-dsn"`
-	StatsExchange    string `mapstructure:"stats-exchange"`
-	SkipStats        bool   `mapstructure:"skip-stats"`
+	PprofListen      string        `mapstructure:"pprof-listen"`
+	JSONLog          bool          `mapstructure:"json-log"`
+	ConnectionString string        `mapstructure:"connection-string"`
+	SkipAuth         bool          `mapstructure:"skip-auth"`
+	NewRelicLicense  string        `mapstructure:"newrelic-license"`
+	NewRelicAppName  string        `mapstructure:"newrelic-appname"`
+	RabbitmqDsn      string        `mapstructure:"rabbitmq-dsn"`
+	StatsExchange    string        `mapstructure:"stats-exchange"`
+	SkipStats        bool          `mapstructure:"skip-stats"`
+	AuthCacheTimeout time.Duration `mapstructure:"auth-cache-timeout"`
 }
 
 func GetConfig() (Config, error) {
