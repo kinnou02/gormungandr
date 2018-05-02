@@ -362,8 +362,8 @@
 [[projects]]
   name = "github.com/sirupsen/logrus"
   packages = ["."]
-  revision = "a3f95b5c423586578a4e099b11a46c2479628cac"
-  version = "1.0.2"
+  revision = "c155da19408a8799da419ed3eeb0cb5db0ad5dbc"
+  version = "v1.0.5"
 
 [[projects]]
   name = "github.com/sony/gobreaker"
@@ -434,6 +434,12 @@
 
 [[projects]]
   branch = "master"
+  name = "golang.org/x/crypto"
+  packages = ["ssh/terminal"]
+  revision = "2c241ca3045ddc354463c376a9515d9f1f1390a4"
+
+[[projects]]
+  branch = "master"
   name = "golang.org/x/net"
   packages = [
     "context",
@@ -490,6 +496,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "2910df0025967cf7a3e0bfe17ac255835738d5981293aa945fef8687bee712b7"
+  inputs-digest = "5d620e992e0b7e5e5d807914cbf18edb89b5d5692b08304e3f6ae0d69ab6a380"
   solver-name = "gps-cdcl"
   solver-version = 1
