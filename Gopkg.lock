@@ -124,10 +124,11 @@
   version = "v1.2"
 
 [[projects]]
-  branch = "master"
+  branch = "fix-host"
   name = "github.com/gin-contrib/location"
   packages = ["."]
-  revision = "911ef8299476b8a48e11ec0c26f2a0810345b690"
+  revision = "37c679faaceeb9f24920361c38eda1204211a8b7"
+  source = "github.com/kinnou02/location"
 
 [[projects]]
   branch = "master"
@@ -361,8 +362,8 @@
 [[projects]]
   name = "github.com/sirupsen/logrus"
   packages = ["."]
-  revision = "d682213848ed68c0a260ca37d6dd5ace8423f5ba"
-  version = "v1.0.4"
+  revision = "c155da19408a8799da419ed3eeb0cb5db0ad5dbc"
+  version = "v1.0.5"
 
 [[projects]]
   name = "github.com/sony/gobreaker"
@@ -435,7 +436,7 @@
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
-  revision = "91a49db82a88618983a78a06c1cbd4e00ab749ab"
+  revision = "2c241ca3045ddc354463c376a9515d9f1f1390a4"
 
 [[projects]]
   branch = "master"
@@ -495,6 +496,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "d5e4863bd31b19b788322c7b5dff5686f39f2e4d76091b7a50d75704f0128341"
+  inputs-digest = "5d620e992e0b7e5e5d807914cbf18edb89b5d5692b08304e3f6ae0d69ab6a380"
   solver-name = "gps-cdcl"
   solver-version = 1
