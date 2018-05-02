@@ -15,6 +15,7 @@ func init() {
 	pflag.String("pprof-listen", "", "address to listen for pprof. format: \"IP:PORT\"")
 	pflag.Lookup("pprof-listen").NoOptDefVal = "localhost:6060"
 	pflag.Bool("json-log", false, "enable json logging")
+	pflag.String("log-level", "debug", "log level: debug, info, warn, error")
 	pflag.StringP("connection-string", "c",
 		"host=localhost user=navitia password=navitia dbname=jormungandr sslmode=disable",
 		"connection string to the jormungandr database",
@@ -35,6 +36,7 @@ type Config struct {
 	Kraken                  string
 	PprofListen             string        `mapstructure:"pprof-listen"`
 	JSONLog                 bool          `mapstructure:"json-log"`
+	LogLevel                string        `mapstructure:"log-level"`
 	ConnectionString        string        `mapstructure:"connection-string"`
 	MaxPostgresqlConnection int           `mapstructure:"max-postresql-connections"`
 	SkipAuth                bool          `mapstructure:"skip-auth"`

@@ -81,13 +81,17 @@ func Status(c *gin.Context) {
 	})
 }
 
-func initLog(jsonLog bool) {
+func initLog(jsonLog bool, logLevel string) {
 	if jsonLog {
 		// Log as JSON instead of the default ASCII formatter.
 		logrus.SetFormatter(&logrus.JSONFormatter{})
 	}
 	logrus.SetOutput(os.Stdout)
-	logrus.SetLevel(logrus.DebugLevel)
+	level, err := logrus.ParseLevel(logLevel)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	logrus.SetLevel(level)
 }
 
 func main() {
@@ -106,7 +110,7 @@ func main() {
 	if err != nil {
 		logger.Fatalf("failure to load configuration: %+v", err)
 	}
-	initLog(config.JSONLog)
+	initLog(config.JSONLog, config.LogLevel)
 	logger = logger.WithFields(logrus.Fields{
 		"config": config,
 	})
