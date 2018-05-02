@@ -19,6 +19,7 @@ func init() {
 		"host=localhost user=navitia password=navitia dbname=jormungandr sslmode=disable",
 		"connection string to the jormungandr database",
 	)
+	pflag.Int("max-postresql-connections", 20, "sets the maximum number of open connections to the database")
 	pflag.Bool("skip-auth", false, "disable authentication")
 	pflag.String("newrelic-license", "", "license key new relic")
 	pflag.String("newrelic-appname", "gormungandr", "application name in new relic")
@@ -29,19 +30,20 @@ func init() {
 }
 
 type Config struct {
-	Listen           string
-	Timeout          time.Duration
-	Kraken           string
-	PprofListen      string        `mapstructure:"pprof-listen"`
-	JSONLog          bool          `mapstructure:"json-log"`
-	ConnectionString string        `mapstructure:"connection-string"`
-	SkipAuth         bool          `mapstructure:"skip-auth"`
-	NewRelicLicense  string        `mapstructure:"newrelic-license"`
-	NewRelicAppName  string        `mapstructure:"newrelic-appname"`
-	RabbitmqDsn      string        `mapstructure:"rabbitmq-dsn"`
-	StatsExchange    string        `mapstructure:"stats-exchange"`
-	SkipStats        bool          `mapstructure:"skip-stats"`
-	AuthCacheTimeout time.Duration `mapstructure:"auth-cache-timeout"`
+	Listen                  string
+	Timeout                 time.Duration
+	Kraken                  string
+	PprofListen             string        `mapstructure:"pprof-listen"`
+	JSONLog                 bool          `mapstructure:"json-log"`
+	ConnectionString        string        `mapstructure:"connection-string"`
+	MaxPostgresqlConnection int           `mapstructure:"max-postresql-connections"`
+	SkipAuth                bool          `mapstructure:"skip-auth"`
+	NewRelicLicense         string        `mapstructure:"newrelic-license"`
+	NewRelicAppName         string        `mapstructure:"newrelic-appname"`
+	RabbitmqDsn             string        `mapstructure:"rabbitmq-dsn"`
+	StatsExchange           string        `mapstructure:"stats-exchange"`
+	SkipStats               bool          `mapstructure:"skip-stats"`
+	AuthCacheTimeout        time.Duration `mapstructure:"auth-cache-timeout"`
 }
 
 func GetConfig() (Config, error) {

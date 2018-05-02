@@ -123,6 +123,7 @@ func main() {
 			authCache *cache.Cache
 		)
 		db, err = sql.Open("postgresInstrumented", config.ConnectionString)
+		db.SetMaxOpenConns(config.MaxPostgresqlConnection)
 		if err != nil {
 			logger.Fatal("connection to postgres failed: ", err)
 		}
