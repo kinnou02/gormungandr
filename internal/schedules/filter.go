@@ -21,6 +21,7 @@ func NoRouteHandler(kraken *gormungandr.Kraken, publisher Publisher) gin.Handler
 		filter, err := gormungandr.ParsePath(c.Param("filter"))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err})
+			return
 		}
 
 		if filter.API == "route_schedules" {
@@ -45,7 +46,7 @@ func NoRouteHandler(kraken *gormungandr.Kraken, publisher Publisher) gin.Handler
 			RouteSchedule(c, kraken, &request, publisher, logger)
 		} else {
 			c.JSON(http.StatusNotFound, gin.H{"error": "API not found"})
-
+			return
 		}
 	}
 	return gin.HandlerFunc(fn)
