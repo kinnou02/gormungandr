@@ -1,9 +1,14 @@
 package serializer
 
-import "github.com/CanalTP/gonavitia/pbnavitia"
-import "testing"
-import "github.com/stretchr/testify/assert"
-import "github.com/golang/protobuf/proto"
+import (
+	"testing"
+	"time"
+
+	"github.com/CanalTP/gonavitia"
+	"github.com/CanalTP/gonavitia/pbnavitia"
+	"github.com/golang/protobuf/proto"
+	"github.com/stretchr/testify/assert"
+)
 
 func TestNewPlaceNil(t *testing.T) {
 	assert.Nil(t, New().NewPlace(nil))
@@ -56,4 +61,14 @@ func TestNewFeedPublisher(t *testing.T) {
 	assert.Equal(t, "name", *fp.Name)
 	assert.Equal(t, "url", *fp.Url)
 	assert.Equal(t, "license", *fp.License)
+}
+
+func TestNewNavitiaDatetime(t *testing.T) {
+	serializer := New()
+
+	assert.Equal(t, gonavitia.NavitiaDatetime(time.Unix(1525348246, 0).In(time.UTC)), serializer.NewNavitiaDatetime(1525348246))
+	location, err := time.LoadLocation("Europe/Paris")
+	assert.NoError(t, err)
+	serializer.Location = location
+	assert.Equal(t, gonavitia.NavitiaDatetime(time.Unix(1525348246, 0).In(location)), serializer.NewNavitiaDatetime(1525348246))
 }

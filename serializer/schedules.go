@@ -14,6 +14,7 @@ func (s *Serializer) NewRouteSchedulesResponse(request *pbnavitia.Request, pb *p
 	if pb == nil {
 		return nil
 	}
+	s.Init(pb.Metadatas)
 	response := gonavitia.RouteScheduleResponse{
 		Error:          s.NewError(pb.Error),
 		RouteSchedules: make([]*gonavitia.RouteSchedule, 0, len(pb.RouteSchedules)),

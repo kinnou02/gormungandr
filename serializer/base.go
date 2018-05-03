@@ -171,5 +171,7 @@ func (s *Serializer) NewFeedPublisher(pb *pbnavitia.FeedPublisher) *gonavitia.Fe
 }
 
 func (s *Serializer) NewNavitiaDatetime(timestamp int64) gonavitia.NavitiaDatetime {
-	return gonavitia.NavitiaDatetime(time.Unix(timestamp, 0))
+	return gonavitia.NavitiaDatetime(
+		time.Unix(timestamp, 0).
+			In(s.Location))
 }

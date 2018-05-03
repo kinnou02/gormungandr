@@ -58,8 +58,8 @@ func TestNewJourneyDirectPath(t *testing.T) {
 	assert.Nil(t, journey.From)
 	assert.Nil(t, journey.To)
 	assert.Equal(t, journey.Duration, *pb_journey.Duration)
-	assert.Equal(t, journey.DepartureDateTime, gonavitia.NavitiaDatetime(time.Unix(1000, 0)))
-	assert.Equal(t, journey.ArrivalDateTime, gonavitia.NavitiaDatetime(time.Unix(1060, 0)))
+	assert.Equal(t, journey.DepartureDateTime, gonavitia.NavitiaDatetime(time.Unix(1000, 0).In(time.UTC)))
+	assert.Equal(t, journey.ArrivalDateTime, gonavitia.NavitiaDatetime(time.Unix(1060, 0).In(time.UTC)))
 	assert.Equal(t, journey.NbTransfers, *pb_journey.NbTransfers)
 	assert.Equal(t, len(journey.Sections), len(pb_journey.Sections))
 }
