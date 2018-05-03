@@ -2,7 +2,6 @@ package serializer
 
 import (
 	"strings"
-	"time"
 
 	"github.com/CanalTP/gonavitia"
 	"github.com/CanalTP/gonavitia/pbnavitia"
@@ -110,9 +109,9 @@ func (s *Serializer) NewDatetime(pb *pbnavitia.ScheduleStopTime) gonavitia.DateT
 	}
 
 	rtLevel := strings.ToLower(pb.GetRealtimeLevel().Enum().String())
-	baseDateTime := gonavitia.NavitiaDatetime(time.Unix(int64(pb.GetBaseDateTime()), 0))
+	baseDateTime := s.NewNavitiaDatetime(int64(pb.GetBaseDateTime()))
 	return gonavitia.DateTime{
-		DateTime:       gonavitia.NavitiaDatetime(time.Unix(int64(pb.GetDate()+pb.GetTime()), 0)),
+		DateTime:       s.NewNavitiaDatetime(int64(pb.GetDate() + pb.GetTime())),
 		BaseDateTime:   &baseDateTime,
 		AdditionalInfo: make([]string, 0),
 		DataFreshness:  &rtLevel,

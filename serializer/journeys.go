@@ -2,7 +2,6 @@ package serializer
 
 import "github.com/CanalTP/gonavitia"
 import "github.com/CanalTP/gonavitia/pbnavitia"
-import "time"
 import "strings"
 import "github.com/golang/protobuf/proto"
 
@@ -26,9 +25,9 @@ func (s *Serializer) NewJourney(pb *pbnavitia.Journey) *gonavitia.Journey {
 		To:                s.NewPlace(pb.Destination),
 		Duration:          pb.GetDuration(),
 		NbTransfers:       pb.GetNbTransfers(),
-		DepartureDateTime: gonavitia.NavitiaDatetime(time.Unix(int64(pb.GetDepartureDateTime()), 0)),
-		ArrivalDateTime:   gonavitia.NavitiaDatetime(time.Unix(int64(pb.GetArrivalDateTime()), 0)),
-		RequestedDateTime: gonavitia.NavitiaDatetime(time.Unix(int64(pb.GetRequestedDateTime()), 0)),
+		DepartureDateTime: s.NewNavitiaDatetime(int64(pb.GetDepartureDateTime())),
+		ArrivalDateTime:   s.NewNavitiaDatetime(int64(pb.GetArrivalDateTime())),
+		RequestedDateTime: s.NewNavitiaDatetime(int64(pb.GetRequestedDateTime())),
 		Status:            pb.GetMostSeriousDisruptionEffect(),
 		Durations:         s.NewDurations(pb.Durations),
 		Distances:         s.NewDistances(pb.Distances),
@@ -58,8 +57,8 @@ func (s *Serializer) NewSection(pb *pbnavitia.Section) *gonavitia.Section {
 		Id:                pb.GetId(),
 		From:              s.NewPlace(pb.Origin),
 		To:                s.NewPlace(pb.Destination),
-		DepartureDateTime: gonavitia.NavitiaDatetime(time.Unix(int64(pb.GetBeginDateTime()), 0)),
-		ArrivalDateTime:   gonavitia.NavitiaDatetime(time.Unix(int64(pb.GetEndDateTime()), 0)),
+		DepartureDateTime: s.NewNavitiaDatetime(int64(pb.GetBeginDateTime())),
+		ArrivalDateTime:   s.NewNavitiaDatetime(int64(pb.GetEndDateTime())),
 		Duration:          pb.GetDuration(),
 		Type:              strings.ToLower(pb.GetType().String()),
 		GeoJson:           s.NewGeoJson(pb),

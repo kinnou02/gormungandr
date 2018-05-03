@@ -80,7 +80,7 @@ func (s *Serializer) NewContext(request *pbnavitia.Request, pb *pbnavitia.Respon
 		return nil
 	}
 	return &gonavitia.Context{
-		CurrentDatetime: gonavitia.NavitiaDatetime(time.Unix(int64(request.GetXCurrentDatetime()), 0)),
+		CurrentDatetime: s.NewNavitiaDatetime(int64(request.GetXCurrentDatetime())),
 		Timezone:        pb.Metadatas.GetTimezone(),
 	}
 }
@@ -168,4 +168,8 @@ func (s *Serializer) NewFeedPublisher(pb *pbnavitia.FeedPublisher) *gonavitia.Fe
 		Id:      pb.Id,
 		License: pb.License,
 	}
+}
+
+func (s *Serializer) NewNavitiaDatetime(timestamp int64) gonavitia.NavitiaDatetime {
+	return gonavitia.NavitiaDatetime(time.Unix(timestamp, 0))
 }
