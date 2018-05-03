@@ -9,7 +9,7 @@ import (
 )
 
 func TestNewGeoJsonNil(t *testing.T) {
-	assert.Nil(t, NewGeoJson(nil))
+	assert.Nil(t, New().NewGeoJson(nil))
 }
 
 func TestNewGeoJson(t *testing.T) {
@@ -19,7 +19,7 @@ func TestNewGeoJson(t *testing.T) {
 		},
 		Length: proto.Int32(19),
 	}
-	geo := NewGeoJson(&pb_section)
+	geo := New().NewGeoJson(&pb_section)
 	assert.Equal(t, "LineString", geo.Type)
 	assert.Equal(t, 1, len(geo.Properties))
 	assert.Equal(t, int32(19), geo.Properties[0]["length"])

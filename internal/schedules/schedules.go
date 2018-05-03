@@ -58,7 +58,7 @@ func RouteSchedule(c *gin.Context, kraken *gormungandr.Kraken, request *RouteSch
 		return
 	}
 	logger.Debug("building response")
-	r := serializer.NewRouteSchedulesResponse(pbReq, resp)
+	r := serializer.New().NewRouteSchedulesResponse(pbReq, resp)
 	fillPaginationLinks(getUrl(c), r)
 	status := http.StatusOK
 	if r.Error != nil {

@@ -6,7 +6,7 @@ import "github.com/stretchr/testify/assert"
 import "github.com/golang/protobuf/proto"
 
 func TestNewPlaceNil(t *testing.T) {
-	assert.Nil(t, NewPlace(nil))
+	assert.Nil(t, New().NewPlace(nil))
 }
 
 func TestNewPlace(t *testing.T) {
@@ -15,14 +15,14 @@ func TestNewPlace(t *testing.T) {
 		Name:         proto.String("bar"),
 		EmbeddedType: pbnavitia.NavitiaType_STOP_AREA.Enum(),
 	}
-	place := NewPlace(&pb)
+	place := New().NewPlace(&pb)
 	assert.Equal(t, *place.Id, "foo")
 	assert.Equal(t, *place.Name, "bar")
 	assert.Equal(t, *place.EmbeddedType, "stop_area")
 }
 
 func TestNewPaginationNil(t *testing.T) {
-	assert.Nil(t, NewPagination(nil))
+	assert.Nil(t, New().NewPagination(nil))
 }
 
 func TestNewPagination(t *testing.T) {
@@ -32,7 +32,7 @@ func TestNewPagination(t *testing.T) {
 		StartPage:    proto.Int32(3),
 		TotalResult:  proto.Int32(4),
 	}
-	pagination := NewPagination(&pb)
+	pagination := New().NewPagination(&pb)
 	assert.Equal(t, pagination.ItemsOnPage, int32(1))
 	assert.Equal(t, pagination.ItemsPerPage, int32(2))
 	assert.Equal(t, pagination.StartPage, int32(3))
@@ -40,7 +40,7 @@ func TestNewPagination(t *testing.T) {
 }
 
 func TestNewFeedPublisherNil(t *testing.T) {
-	assert.Nil(t, NewFeedPublisher(nil))
+	assert.Nil(t, New().NewFeedPublisher(nil))
 }
 
 func TestNewFeedPublisher(t *testing.T) {
@@ -50,7 +50,7 @@ func TestNewFeedPublisher(t *testing.T) {
 		Url:     proto.String("url"),
 		License: proto.String("license"),
 	}
-	fp := NewFeedPublisher(&pb)
+	fp := New().NewFeedPublisher(&pb)
 	assert.NotNil(t, fp)
 	assert.Equal(t, "id", *fp.Id)
 	assert.Equal(t, "name", *fp.Name)
