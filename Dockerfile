@@ -5,7 +5,7 @@ ADD $PWD /go/src/github.com/CanalTP/gormungandr
 RUN make build
 
 FROM alpine:latest
-RUN apk --no-cache add libzmq curl
+RUN apk --no-cache add libzmq curl tzdata
 USER daemon:daemon
 WORKDIR /
 COPY --from=builder /go/src/github.com/CanalTP/gormungandr/schedules .
