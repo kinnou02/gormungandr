@@ -3,11 +3,13 @@ package gormungandr
 import (
 	"context"
 	"database/sql"
+	"reflect"
+	"runtime"
 	"strconv"
 	"time"
 
 	"github.com/gchaincl/sqlhooks"
-	"github.com/gin-gonic/gin"
+	"github.com/labstack/echo"
 	"github.com/lib/pq"
 	"github.com/prometheus/client_golang/prometheus"
 )
@@ -80,14 +82,17 @@ func init() {
 	sql.Register("postgresInstrumented", sqlhooks.Wrap(&pq.Driver{}, &instrumentHook{}))
 }
 
-func InstrumentGin() gin.HandlerFunc {
-	return func(c *gin.Context) {
+func Instrument(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
 		begin := time.Now()
 		httpInFlight.Inc()
-		c.Next()
+		if err := next(c); err != nil {
+			c.Error(err)
+		}
 		httpInFlight.Dec()
-		observer := httpDurations.With(prometheus.Labels{"handler": c.HandlerName(), "code": strconv.Itoa(c.Writer.Status())})
+		observer := httpDurations.With(prometheus.Labels{"handler": runtime.FuncForPC(reflect.ValueOf(c.Handler()).Pointer()).Name(), "code": strconv.Itoa(c.Response().Status)})
 		observer.Observe(time.Since(begin).Seconds())
+		return nil
 	}
 }
 

@@ -10,74 +10,79 @@ import (
 	"syscall"
 	"time"
 
-	"database/sql"
+	//"database/sql"
 
 	_ "net/http/pprof"
 
 	"github.com/CanalTP/gormungandr"
 	"github.com/CanalTP/gormungandr/auth"
 	"github.com/CanalTP/gormungandr/internal/schedules"
-	cache "github.com/patrickmn/go-cache"
-	"github.com/rafaeljesus/rabbus"
+	//cache "github.com/patrickmn/go-cache"
+	//"github.com/rafaeljesus/rabbus"
 
-	"github.com/gin-contrib/cors"
-	"github.com/gin-contrib/location"
-	"github.com/gin-gonic/contrib/ginrus"
-	"github.com/gin-gonic/gin"
-	"github.com/newrelic/go-agent"
-	"github.com/newrelic/go-agent/_integrations/nrgin/v1"
+	//"github.com/gin-contrib/cors"
+	//"github.com/gin-contrib/location"
+	//"github.com/gin-gonic/contrib/ginrus"
+	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
+	//"github.com/newrelic/go-agent"
+	//"github.com/newrelic/go-agent/_integrations/nrgin/v1"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
 )
 
-func setupRouter(config schedules.Config) *gin.Engine {
-	r := gin.New()
-	r.Use(ginrus.Ginrus(logrus.StandardLogger(), time.RFC3339, false))
-	r.Use(gormungandr.InstrumentGin())
+func setupRouter(config schedules.Config) *echo.Echo {
+	e := echo.New()
+	//r.Use(ginrus.Ginrus(logrus.StandardLogger(), time.RFC3339, false))
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
+	e.Use(gormungandr.Instrument)
 	// Recovery middleware recovers from any panics and writes a 500 if there was one.
-	r.Use(gormungandr.Recovery())
+	//r.Use(gormungandr.Recovery())
 
-	r.Use(cors.New(cors.Config{
-		AllowAllOrigins:  true,
-		AllowHeaders:     []string{"Access-Control-Request-Headers", "Authorization"},
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins:     []string{"*"},
+		AllowHeaders:     []string{echo.HeaderAuthorization, echo.HeaderAccessControlRequestHeaders},
 		AllowCredentials: true,
-		MaxAge:           12 * time.Hour,
+		MaxAge:           int((12 * time.Hour).Seconds()),
 	}))
-	r.Use(location.New(location.Config{
-		Scheme: "http",
-		Host:   "navitia.io",
-	}))
+	/*
 
-	if len(config.NewRelicLicense) > 0 {
-		nrConfig := newrelic.NewConfig(config.NewRelicAppName, config.NewRelicLicense)
-		app, err := newrelic.NewApplication(nrConfig)
-		if err != nil {
-			logrus.Fatalf("Impossible to initialize newrelic: %+v", err)
+		if len(config.NewRelicLicense) > 0 {
+			nrConfig := newrelic.NewConfig(config.NewRelicAppName, config.NewRelicLicense)
+			app, err := newrelic.NewApplication(nrConfig)
+			if err != nil {
+				logrus.Fatalf("Impossible to initialize newrelic: %+v", err)
+			}
+			r.Use(nrgin.Middleware(app))
 		}
-		r.Use(nrgin.Middleware(app))
-	}
+	*/
 
-	r.GET("/metrics", gin.WrapH(promhttp.Handler()))
+	e.GET("/metrics", echo.WrapHandler(promhttp.Handler()))
 
-	r.GET("/", Index)
-	r.GET("/status", Status)
+	e.GET("/", Index)
+	e.GET("/status", Status)
 
-	return r
+	return e
 }
 
-func Index(c *gin.Context) {
+func Index(c echo.Context) error {
 	//this is temporary, but our LB except this to work...
-	c.JSON(200, gin.H{
-		"versions": "",
-	})
+	return c.JSON(http.StatusOK, struct {
+		Versions string `json:"version"`
+	}{})
 }
 
-func Status(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"status":  "ok",
-		"version": gormungandr.Version,
-		"runtime": runtime.Version(),
+func Status(c echo.Context) error {
+	return c.JSON(http.StatusOK, struct {
+		Status  string `json:"status"`
+		Version string `json:"version"`
+		Runtime string `json:"runtime"`
+	}{
+		Status:  "ok",
+		Version: gormungandr.Version,
+		Runtime: runtime.Version(),
 	})
 }
 
@@ -117,77 +122,75 @@ func main() {
 	logger.Info("starting schedules")
 
 	kraken := gormungandr.NewKraken("default", config.Kraken, config.Timeout)
-	router := setupRouter(config)
-	cov := router.Group("/v1/coverage/:coverage")
+	echo := setupRouter(config)
 
-	if !config.SkipAuth {
-		//disable database if authentication isn't used
-		var (
-			db        *sql.DB
-			authCache *cache.Cache
-		)
-		db, err = sql.Open("postgresInstrumented", config.ConnectionString)
-		db.SetMaxOpenConns(config.MaxPostgresqlConnection)
-		if err != nil {
-			logger.Fatal("connection to postgres failed: ", err)
+	cov := echo.Group("/v1/coverage/:coverage")
+	/*
+		if !config.SkipAuth {
+			//disable database if authentication isn't used
+			var (
+				db        *sql.DB
+				authCache *cache.Cache
+			)
+			db, err = sql.Open("postgresInstrumented", config.ConnectionString)
+			db.SetMaxOpenConns(config.MaxPostgresqlConnection)
+			if err != nil {
+				logger.Fatal("connection to postgres failed: ", err)
+			}
+			err = db.Ping()
+			if err != nil {
+				logger.Fatal("connection to postgres failed: ", err)
+			}
+			if config.AuthCacheTimeout.Seconds() > 0 {
+				logger.Info("Activate authentication cache")
+				authCache = cache.New(config.AuthCacheTimeout, config.AuthCacheTimeout*2)
+			}
+
+			cov.Use(auth.AuthenticationMiddleware(db, authCache))
 		}
-		err = db.Ping()
-		if err != nil {
-			logger.Fatal("connection to postgres failed: ", err)
+
+		if len(config.PprofListen) != 0 {
+			go func() {
+				logrus.Infof("pprof listening on %s", config.PprofListen)
+				logger.Error(http.ListenAndServe(config.PprofListen, nil))
+			}()
 		}
-		if config.AuthCacheTimeout.Seconds() > 0 {
-			logger.Info("Activate authentication cache")
-			authCache = cache.New(config.AuthCacheTimeout, config.AuthCacheTimeout*2)
+
+		var statPublisher *auth.StatPublisher
+		if !config.SkipStats {
+			var rmq *rabbus.Rabbus
+			rmq, err = rabbus.New(
+				config.RabbitmqDsn,
+				rabbus.Durable(true),
+				rabbus.Attempts(3),
+				rabbus.Sleep(time.Second*2),
+			)
+			if err != nil {
+				logrus.Fatal("failure while connecting to rabbitmq ", err)
+			}
+			defer func(rmq *rabbus.Rabbus) {
+				if err = rmq.Close(); err != nil {
+					logrus.Fatal("failure while closing rabbitmq connection ", err)
+				}
+			}(rmq)
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+
+			go func() {
+				if err = rmq.Run(ctx); err != nil && err != context.Canceled {
+					logrus.Errorf("rabbus.run ended with error: %+v", err)
+				}
+			}()
+			statPublisher = auth.NewStatPublisher(rmq, config.StatsExchange, 2*time.Second)
 		}
-
-		cov.Use(auth.AuthenticationMiddleware(db, authCache))
-	}
-
-	if len(config.PprofListen) != 0 {
-		go func() {
-			logrus.Infof("pprof listening on %s", config.PprofListen)
-			logger.Error(http.ListenAndServe(config.PprofListen, nil))
-		}()
-	}
-
+	*/
 	var statPublisher *auth.StatPublisher
-	if !config.SkipStats {
-		var rmq *rabbus.Rabbus
-		rmq, err = rabbus.New(
-			config.RabbitmqDsn,
-			rabbus.Durable(true),
-			rabbus.Attempts(3),
-			rabbus.Sleep(time.Second*2),
-		)
-		if err != nil {
-			logrus.Fatal("failure while connecting to rabbitmq ", err)
-		}
-		defer func(rmq *rabbus.Rabbus) {
-			if err = rmq.Close(); err != nil {
-				logrus.Fatal("failure while closing rabbitmq connection ", err)
-			}
-		}(rmq)
-		ctx, cancel := context.WithCancel(context.Background())
-		defer cancel()
+	cov.GET("/*", schedules.NoRouteHandler(kraken, statPublisher))
 
-		go func() {
-			if err = rmq.Run(ctx); err != nil && err != context.Canceled {
-				logrus.Errorf("rabbus.run ended with error: %+v", err)
-			}
-		}()
-		statPublisher = auth.NewStatPublisher(rmq, config.StatsExchange, 2*time.Second)
-	}
-
-	cov.GET("/*filter", schedules.NoRouteHandler(kraken, statPublisher))
-
-	srv := &http.Server{
-		Addr:    config.Listen,
-		Handler: router,
-	}
 	go func() {
 		// service connections
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			logger.Fatalf("listen: %s", err)
+		if err := echo.Start(config.Listen); err != nil {
+			logger.Info("shutting down the server")
 		}
 	}()
 
@@ -200,7 +203,7 @@ func main() {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	if err := srv.Shutdown(ctx); err != nil {
+	if err := echo.Shutdown(ctx); err != nil {
 		logrus.Fatal("Server Shutdown:", err)
 	}
 	logrus.Info("Server exiting")

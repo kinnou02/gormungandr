@@ -11,9 +11,9 @@ import (
 	"github.com/CanalTP/gonavitia/pbnavitia"
 	"github.com/CanalTP/gormungandr"
 	"github.com/CanalTP/gormungandr/serializer"
-	"github.com/gin-contrib/location"
-	"github.com/gin-gonic/gin"
 	"github.com/golang/protobuf/proto"
+	"github.com/json-iterator/go"
+	"github.com/labstack/echo"
 	"github.com/satori/go.uuid"
 	"github.com/sirupsen/logrus"
 )
@@ -24,7 +24,7 @@ type RouteScheduleRequest struct {
 	StartPage        int32     `form:"start_page"`
 	Count            int32     `form:"count"`
 	Duration         int32     `form:"duration"`
-	ForbiddenUris    []string  //mapping with Binding doesn't work
+	ForbiddenUris    []string  //`form:"forbidden_uris[]`
 	Depth            int32     `form:"depth"`
 	CurrentDatetime  time.Time `form:"_current_datetime"`
 	ItemsPerSchedule int32     `form:"items_per_schedule"`
@@ -48,14 +48,14 @@ func NewRouteScheduleRequest() RouteScheduleRequest {
 	}
 }
 
-func RouteSchedule(c *gin.Context, kraken *gormungandr.Kraken, request *RouteScheduleRequest, publisher Publisher, logger *logrus.Entry) {
+func RouteSchedule(c echo.Context, kraken *gormungandr.Kraken, request *RouteScheduleRequest, publisher Publisher, logger *logrus.Entry) error {
 	pbReq := BuildRequestRouteSchedule(*request)
 	resp, err := kraken.Call(pbReq)
 	logger.Debug("calling kraken")
 	if err != nil {
 		logger.Errorf("Error while calling kraken: %+v\n", err)
-		c.JSON(http.StatusServiceUnavailable, gin.H{"error": err})
-		return
+		//c.JSON(http.StatusServiceUnavailable, gin.H{"error": err})
+		return echo.NewHTTPError(http.StatusServiceUnavailable, err) //TODO handle error
 	}
 	logger.Debug("building response")
 	r := serializer.NewRouteSchedulesResponse(pbReq, resp)
@@ -64,17 +64,20 @@ func RouteSchedule(c *gin.Context, kraken *gormungandr.Kraken, request *RouteSch
 	if r.Error != nil {
 		status = r.Error.Code.HTTPCode()
 	}
-	c.JSON(status, r)
 	logger.Debug("handling stats")
 
 	go func() {
-		err = publisher.PublishRouteSchedule(*request, *r, *c.Copy())
+		err = publisher.PublishRouteSchedule(*request, *r, c)
 		if err != nil {
 			logger.Errorf("stat not sent %+v", err)
 		} else {
 			logger.Debug("stat sent")
 		}
 	}()
+	//we stream the response
+	c.Response().Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSONCharsetUTF8)
+	c.Response().WriteHeader(status)
+	return jsoniter.NewEncoder(c.Response()).Encode(r)
 }
 
 func BuildRequestRouteSchedule(req RouteScheduleRequest) *pbnavitia.Request {
@@ -102,10 +105,30 @@ func BuildRequestRouteSchedule(req RouteScheduleRequest) *pbnavitia.Request {
 	return pbReq
 }
 
-func getUrl(c *gin.Context) *url.URL {
-	u := location.Get(c)
-	u.RawQuery = c.Request.URL.RawQuery
-	u.Path = c.Request.URL.Path
+func getUrl(c echo.Context) *url.URL {
+	request := c.Request()
+	u := request.URL
+	switch {
+	case request.Header.Get("X-Forwarded-Host") != "":
+		u.Host = request.Header.Get("X-Forwarded-Host")
+	case request.Header.Get("X-Host") != "":
+		u.Host = request.Header.Get("X-Host")
+	case request.Host != "":
+		u.Host = request.Host
+	}
+	switch {
+	case request.Header.Get("X-Forwarded-Proto") != "":
+		u.Scheme = request.Header.Get("X-Forwarded-Proto")
+	case request.URL.Scheme != "":
+		u.Scheme = request.URL.Scheme
+	case request.TLS != nil:
+		u.Scheme = "https"
+	case strings.HasPrefix(request.Proto, "HTTPS"):
+		u.Scheme = "https"
+	default:
+		u.Scheme = "https"
+	}
+
 	return u
 }
 

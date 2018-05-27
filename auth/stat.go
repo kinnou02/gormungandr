@@ -6,8 +6,8 @@ import (
 	"github.com/CanalTP/gonavitia"
 	"github.com/CanalTP/gonavitia/pbnavitia"
 	"github.com/CanalTP/gormungandr/internal/schedules"
-	"github.com/gin-gonic/gin"
 	"github.com/golang/protobuf/proto"
+	"github.com/labstack/echo"
 	"github.com/pkg/errors"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/rafaeljesus/rabbus"
@@ -75,7 +75,7 @@ func (s *StatPublisher) publish(stat pbnavitia.StatRequest) error {
 	}
 }
 
-func buildStatForRouteSchedule(request schedules.RouteScheduleRequest, response gonavitia.RouteScheduleResponse, c gin.Context) pbnavitia.StatRequest {
+func buildStatForRouteSchedule(request schedules.RouteScheduleRequest, response gonavitia.RouteScheduleResponse, c echo.Context) pbnavitia.StatRequest {
 	return pbnavitia.StatRequest{
 		RequestDate:     proto.Uint64(uint64(time.Now().Unix())),
 		Api:             proto.String("v1.route_schedules"),
@@ -87,9 +87,9 @@ func buildStatForRouteSchedule(request schedules.RouteScheduleRequest, response 
 		EndPointName:    &request.User.EndPointName,
 		ApplicationId:   proto.Int32(-1), //same as jormun
 		RequestDuration: proto.Int32(0),  //TODO
-		Path:            proto.String(c.Request.URL.Path),
-		Host:            proto.String(c.Request.URL.Host),
-		Client:          proto.String(c.ClientIP()),
+		Path:            proto.String(c.Request().URL.Path),
+		Host:            proto.String(c.Request().URL.Host),
+		Client:          proto.String(c.RealIP()),
 		ResponseSize:    proto.Int32(0), //always been wrong in jormun...
 		InfoResponse:    buildStatInfoResponse(response.Pagination),
 		Coverages:       []*pbnavitia.StatCoverage{{RegionId: &request.Coverage}},
@@ -106,7 +106,7 @@ func buildStatInfoResponse(pagination *gonavitia.Pagination) *pbnavitia.StatInfo
 }
 
 func (s *StatPublisher) PublishRouteSchedule(request schedules.RouteScheduleRequest,
-	response gonavitia.RouteScheduleResponse, c gin.Context) error {
+	response gonavitia.RouteScheduleResponse, c echo.Context) error {
 
 	if s == nil { //if nil is passed by interface we don't want to panic
 		return nil
