@@ -17,6 +17,7 @@ import (
 	"github.com/CanalTP/gormungandr"
 	"github.com/CanalTP/gormungandr/auth"
 	"github.com/CanalTP/gormungandr/internal/schedules"
+	"github.com/CanalTP/gormungandr/kraken"
 	cache "github.com/patrickmn/go-cache"
 	"github.com/rafaeljesus/rabbus"
 
@@ -116,7 +117,7 @@ func main() {
 	})
 	logger.Info("starting schedules")
 
-	kraken := gormungandr.NewKraken("default", config.Kraken, config.Timeout)
+	kraken := kraken.NewKrakenZMQ("default", config.Kraken, config.Timeout)
 	router := setupRouter(config)
 	cov := router.Group("/v1/coverage/:coverage")
 
