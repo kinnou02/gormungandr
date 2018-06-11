@@ -31,15 +31,17 @@ type Kraken struct {
 	Addr    string
 	Timeout time.Duration
 
-	cb       *gobreaker.CircuitBreaker
-	observer KrakenObserver
+	cb         *gobreaker.CircuitBreaker
+	observer   KrakenObserver
+	socketPool *pool
 }
 
 func NewKraken(name, addr string, timeout time.Duration) *Kraken {
 	kraken := &Kraken{
-		Name:    name,
-		Timeout: timeout,
-		Addr:    addr,
+		Name:       name,
+		Timeout:    timeout,
+		Addr:       addr,
+		socketPool: newPool(addr, 100),
 	}
 	var st gobreaker.Settings
 	st.Name = "Kraken"
@@ -48,34 +50,33 @@ func NewKraken(name, addr string, timeout time.Duration) *Kraken {
 }
 
 func (k *Kraken) call(request []byte) ([]byte, error) {
-	requester, err := zmq.NewSocket(zmq.REQ)
+	var err error
+	var requester *zmq.Socket
+	requester, err = k.socketPool.Borrow()
 	if err != nil {
-		return nil, errors.Wrap(err, "error while creating ZMQ socket")
+		return nil, err
 	}
-	if err = requester.Connect(k.Addr); err != nil {
-		return nil, errors.Wrap(err, "error while connecting")
-	}
-	defer func() {
-		if err = requester.Close(); err != nil {
-			logrus.Warnf("error while closing the socket %s", err)
-		}
-	}()
 	if _, err = requester.SendBytes(request, 0); err != nil {
+		closeSocket(requester)
 		return nil, errors.Wrap(err, "error while sending")
 	}
 	poller := zmq.NewPoller()
 	poller.Add(requester, zmq.POLLIN)
 	p, err := poller.Poll(k.Timeout)
 	if err != nil {
+		closeSocket(requester)
 		return nil, errors.Wrap(err, "error during polling")
 	}
 	if len(p) < 1 {
+		closeSocket(requester)
 		return nil, NewKrakenTimeout(fmt.Sprintf("kraken %s timeout", k.Name))
 	}
 	rawResp, err := p[0].Socket.RecvBytes(0)
 	if err != nil {
+		closeSocket(requester)
 		return nil, errors.Wrap(err, "error while receiving response")
 	}
+	k.socketPool.Return(requester)
 	return rawResp, nil
 }
 
@@ -99,4 +100,59 @@ func (k *Kraken) Call(request *pbnavitia.Request) (*pbnavitia.Response, error) {
 		return nil, errors.Wrap(err, "error while unmarshalling response")
 	}
 	return response, nil
+}
+
+func closeSocket(s *zmq.Socket) {
+	if err := s.Close(); err != nil {
+		logrus.Warnf("error while closing the socket %s", err)
+	}
+}
+
+func NewSocket(addr string) (*zmq.Socket, error) {
+	socket, err := zmq.NewSocket(zmq.REQ)
+	if err != nil {
+		return nil, errors.Wrap(err, "error while creating ZMQ socket")
+	}
+	if err = socket.Connect(addr); err != nil {
+		return nil, errors.Wrap(err, "error while connecting")
+	}
+	if err = socket.SetLinger(0); err != nil {
+		return nil, errors.Wrap(err, "error while set linger")
+	}
+	return socket, nil
+}
+
+//hold established zocket to kraken instance
+type pool struct {
+	pool chan *zmq.Socket
+	Addr string
+}
+
+// NewPool creates a new pool of socket.
+func newPool(addr string, max int) *pool {
+	return &pool{
+		Addr: addr,
+		pool: make(chan *zmq.Socket, max),
+	}
+}
+
+// Borrow a Socket from the pool.
+func (p *pool) Borrow() (*zmq.Socket, error) {
+	var s *zmq.Socket
+	select {
+	case s = <-p.pool:
+		return s, nil
+	default:
+		return NewSocket(p.Addr)
+	}
+}
+
+// Return returns a socket to the pool.
+func (p *pool) Return(s *zmq.Socket) {
+	select {
+	case p.pool <- s:
+	default:
+		//pool is full, closing socket
+		closeSocket(s)
+	}
 }
