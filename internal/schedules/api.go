@@ -11,6 +11,12 @@ type Publisher interface {
 	PublishRouteSchedule(request RouteScheduleRequest, response gonavitia.RouteScheduleResponse, c gin.Context) error
 }
 
+type NullPublisher struct{}
+
+func (p *NullPublisher) PublishRouteSchedule(request RouteScheduleRequest, response gonavitia.RouteScheduleResponse, c gin.Context) error {
+	return nil
+}
+
 type AuthOption func(*gin.RouterGroup)
 
 func Auth(authMiddleware gin.HandlerFunc) AuthOption {

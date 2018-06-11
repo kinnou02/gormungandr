@@ -104,6 +104,10 @@ func BuildRequestRouteSchedule(req RouteScheduleRequest) *pbnavitia.Request {
 
 func getUrl(c *gin.Context) *url.URL {
 	u := location.Get(c)
+	if u == nil {
+		//if locatation doesn't give us an url, we use the one from gin
+		return c.Request.URL
+	}
 	u.RawQuery = c.Request.URL.RawQuery
 	u.Path = c.Request.URL.Path
 	return u

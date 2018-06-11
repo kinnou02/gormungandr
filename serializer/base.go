@@ -66,7 +66,11 @@ func NewAdmin(pb *pbnavitia.AdministrativeRegion) *gonavitia.Admin {
 
 func NewCoord(pb *pbnavitia.GeographicalCoord) *gonavitia.Coord {
 	if pb == nil {
-		return nil
+		//this is what jormun do...
+		return &gonavitia.Coord{
+			Lat: 0,
+			Lon: 0,
+		}
 	}
 	coord := gonavitia.Coord{
 		Lat: pb.GetLat(),
