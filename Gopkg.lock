@@ -13,15 +13,14 @@
   revision = "d6e3b3328b783f23731bc4d058875b0371ff8109"
 
 [[projects]]
-  branch = "master"
-  digest = "1:3e4d8835b43369beb7efa98f0c26ca1a9c10c40b2c9b74deaddb96b3463159de"
+  branch = "unmarshall"
   name = "github.com/CanalTP/gonavitia"
   packages = [
     ".",
     "pbnavitia",
   ]
-  pruneopts = "UT"
-  revision = "ba06c126d920c476db1fe3867f202ed34ea13f34"
+  revision = "16a730388b0ad931ad3caf703f4e2857a126e96b"
+  source = "github.com/kinnou02/gonavitia"
 
 [[projects]]
   digest = "1:05c1f0aa5c5e42e1b85cbe1a9c9c74adfd1e5d0c1b839b2924371aed51e9eb64"
@@ -626,34 +625,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  input-imports = [
-    "github.com/CanalTP/gonavitia",
-    "github.com/CanalTP/gonavitia/pbnavitia",
-    "github.com/gchaincl/sqlhooks",
-    "github.com/gin-contrib/cors",
-    "github.com/gin-contrib/location",
-    "github.com/gin-gonic/contrib/ginrus",
-    "github.com/gin-gonic/gin",
-    "github.com/golang/protobuf/proto",
-    "github.com/lib/pq",
-    "github.com/newrelic/go-agent",
-    "github.com/newrelic/go-agent/_integrations/nrgin/v1",
-    "github.com/patrickmn/go-cache",
-    "github.com/pebbe/zmq4",
-    "github.com/pkg/errors",
-    "github.com/prometheus/client_golang/prometheus",
-    "github.com/prometheus/client_golang/prometheus/promhttp",
-    "github.com/rafaeljesus/rabbus",
-    "github.com/satori/go.uuid",
-    "github.com/sirupsen/logrus",
-    "github.com/sony/gobreaker",
-    "github.com/spf13/pflag",
-    "github.com/spf13/viper",
-    "github.com/stretchr/testify/assert",
-    "github.com/stretchr/testify/mock",
-    "github.com/stretchr/testify/require",
-    "gopkg.in/DATA-DOG/go-sqlmock.v1",
-    "gopkg.in/ory-am/dockertest.v3",
-  ]
+  inputs-digest = "9633b80aa34fd741b50ae85b271edb1cc149730962a60b0d0c7f0d640f76524a"
   solver-name = "gps-cdcl"
   solver-version = 1

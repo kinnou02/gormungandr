@@ -76,7 +76,7 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
-func TestFoo(t *testing.T) {
+func TestRouteSchedules(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test Docker in short mode.")
 	}

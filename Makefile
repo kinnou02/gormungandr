@@ -14,7 +14,7 @@ dep: ## Run dep ensure and prune
 
 .PHONY: test
 test: ## Run all the tests
-	echo 'mode: atomic' > coverage.txt && go test -covermode=atomic -coverprofile=coverage.txt -race -timeout=30s ./...
+	echo 'mode: atomic' > coverage.txt && go test -covermode=atomic -coverpkg=./... -coverprofile=coverage.txt -race -timeout=30s ./...
 
 .PHONY: fasttest
 fasttest: ## Run short tests

@@ -43,7 +43,8 @@
 
 [[constraint]]
   name = "github.com/CanalTP/gonavitia"
-  branch = "master"
+  source = "github.com/kinnou02/gonavitia"
+  branch = "unmarshall"
 
 [[constraint]]
   branch = "master"
