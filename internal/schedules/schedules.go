@@ -67,8 +67,10 @@ func RouteSchedule(c *gin.Context, kraken *gormungandr.Kraken, request *RouteSch
 	c.JSON(status, r)
 	logger.Debug("handling stats")
 
+	//the original context must not be used in another goroutine, we have to copy it
+	readonlyContext := c.Copy()
 	go func() {
-		err = publisher.PublishRouteSchedule(*request, *r, *c.Copy())
+		err = publisher.PublishRouteSchedule(*request, *r, *readonlyContext)
 		if err != nil {
 			logger.Errorf("stat not sent %+v", err)
 		} else {

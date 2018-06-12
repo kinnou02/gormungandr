@@ -55,7 +55,7 @@ func IsValidRouteScheduleRow(t *testing.T, row gonavitia.Row) {
 	for _, d := range row.DateTimes {
 		assert.NotNil(d.AdditionalInfo)
 		assert.NotEmpty(d.Links)
-		//unmarshalling was a sucess so the datetime is valid or empty
+		//unmarshalling was a success so the datetime is valid or empty
 	}
 	IsValidStopPoint(t, row.StopPoint, 1)
 
