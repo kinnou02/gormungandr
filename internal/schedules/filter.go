@@ -25,7 +25,7 @@ func NoRouteHandler(kraken kraken.Kraken, publisher Publisher) gin.HandlerFunc {
 		if filter.API == "route_schedules" {
 			request := NewRouteScheduleRequest(request)
 			if err := c.ShouldBindQuery(&request); err != nil {
-				request.Logger.Debugf("%+v\n", err)
+				request.Logger().Debugf("%+v\n", err)
 				c.JSON(http.StatusBadRequest, gin.H{"error": err})
 				return
 			}

@@ -49,13 +49,13 @@ func NewRouteScheduleRequest(req gormungandr.Request) RouteScheduleRequest {
 func RouteSchedule(c *gin.Context, kraken kraken.Kraken, request *RouteScheduleRequest, publisher Publisher) {
 	pbReq := BuildRequestRouteSchedule(*request)
 	resp, err := kraken.Call(pbReq)
-	request.Logger.Debug("calling kraken")
+	request.Logger().Debug("calling kraken")
 	if err != nil {
-		request.Logger.Errorf("Error while calling kraken: %+v\n", err)
+		request.Logger().Errorf("Error while calling kraken: %+v\n", err)
 		c.JSON(http.StatusServiceUnavailable, gin.H{"error": err})
 		return
 	}
-	request.Logger.Debug("building response")
+	request.Logger().Debug("building response")
 	r := serializer.New().NewRouteSchedulesResponse(pbReq, resp)
 	fillPaginationLinks(getUrl(c), r)
 	status := http.StatusOK
@@ -63,16 +63,16 @@ func RouteSchedule(c *gin.Context, kraken kraken.Kraken, request *RouteScheduleR
 		status = r.Error.Code.HTTPCode()
 	}
 	c.JSON(status, r)
-	request.Logger.Debug("handling stats")
+	request.Logger().Debug("handling stats")
 
 	//the original context must not be used in another goroutine, we have to copy it
 	readonlyContext := c.Copy()
 	go func() {
 		err = publisher.PublishRouteSchedule(*request, *r, *readonlyContext)
 		if err != nil {
-			request.Logger.Errorf("stat not sent %+v", err)
+			request.Logger().Errorf("stat not sent %+v", err)
 		} else {
-			request.Logger.Debug("stat sent")
+			request.Logger().Debug("stat sent")
 		}
 	}()
 }
