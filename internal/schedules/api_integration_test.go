@@ -3,13 +3,9 @@ package schedules
 import (
 	"encoding/json"
 	"flag"
-	"fmt"
-	"net"
-	_ "net/http"
 	"net/http/httptest"
 	"os"
 	"testing"
-	"time"
 
 	"github.com/CanalTP/gonavitia"
 	"github.com/CanalTP/gormungandr"
@@ -18,7 +14,6 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"gopkg.in/ory-am/dockertest.v3"
 )
 
 var kraken *gormungandr.Kraken
@@ -33,45 +28,20 @@ func TestMain(m *testing.M) {
 		log.Warn("skipping test Docker in short mode.")
 		os.Exit(m.Run())
 	}
-	pool, err := dockertest.NewPool("")
-	if err != nil {
-		log.Fatalf("Could not connect to docker: %s", err)
-	}
-	options := dockertest.RunOptions{
-		Repository: "navitia/mock-kraken",
-		Tag:        "latest",
-		Env:        []string{"KRAKEN_GENERAL_log_level=DEBUG"},
-		Cmd:        []string{"./departure_board_test", "--GENERAL.zmq_socket", "tcp://*:30000"},
-	}
-	resource, err := pool.RunWithOptions(&options)
-	if err != nil {
-		log.Fatalf("Could not start resource: %s", err)
-	}
-	conStr := ""
-	// exponential backoff-retry, because the application in the container might not be ready to accept connections yet
-	pool.MaxWait = 30 * time.Second
-	if err = pool.Retry(func() error {
-		var err2 error
-		var conn net.Conn
-		conStr = fmt.Sprintf("localhost:%s", resource.GetPort("30000/tcp"))
-		conn, err2 = net.Dial("tcp", conStr)
-		if err2 != nil {
-			return err2
-		}
-		conn.Close()
-		return nil
-	}); err != nil {
-		log.Fatalf("Could not connect to docker: %s", err)
-	}
-	kraken = gormungandr.NewKraken("default", fmt.Sprint("tcp://", conStr), 1*time.Second)
 
+	mockManager, err := checker.NewMockManager()
+	if err != nil {
+		log.Fatalf("Could not initialize mocks: %s", err)
+	}
+	kraken, err = mockManager.DepartureBoardTest()
+	if err != nil {
+		log.Fatalf("Could not start departure_board_test: %s", err)
+	}
 	//Run tests
 	code := m.Run()
 
 	// You can't defer this because os.Exit doesn't care for defer
-	if err := pool.Purge(resource); err != nil {
-		log.Fatalf("Could not purge resource: %s", err)
-	}
+	mockManager.Close()
 
 	os.Exit(code)
 }
