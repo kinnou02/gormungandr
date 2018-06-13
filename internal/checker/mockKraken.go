@@ -9,6 +9,9 @@ import (
 	"gopkg.in/ory-am/dockertest.v3"
 )
 
+// MockManager handle the creation of kraken mock
+// at the end of the test the manager must be close with Close() to release
+// the ressources allocated, typically the container.
 type MockManager struct {
 	pool      *dockertest.Pool
 	resources []*dockertest.Resource
@@ -38,6 +41,10 @@ func (m *MockManager) DepartureBoardTest() (*gormungandr.Kraken, error) {
 	return m.startKraken("departure_board_test")
 }
 
+func (m *MockManager) MainRoutingTest() (*gormungandr.Kraken, error) {
+	return m.startKraken("main_routing_test")
+}
+
 func (m *MockManager) startKraken(binary string) (*gormungandr.Kraken, error) {
 	options := dockertest.RunOptions{
 		Repository: "navitia/mock-kraken",
@@ -64,5 +71,5 @@ func (m *MockManager) startKraken(binary string) (*gormungandr.Kraken, error) {
 	}); err != nil {
 		return nil, err
 	}
-	return gormungandr.NewKraken("default", fmt.Sprint("tcp://", conStr), 1*time.Second), nil
+	return gormungandr.NewKraken(binary, fmt.Sprint("tcp://", conStr), 1*time.Second), nil
 }
