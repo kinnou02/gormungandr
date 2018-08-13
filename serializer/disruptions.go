@@ -55,7 +55,6 @@ func NewSeverity(pb *pbnavitia.Severity) *gonavitia.Severity {
 		Name:     pb.Name,
 		Priority: pb.GetPriority(),
 		Color:    pb.Color,
-		Effect:   pb.Effect,
 	}
 	return &s
 }
