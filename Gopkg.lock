@@ -14,14 +14,14 @@
 
 [[projects]]
   branch = "unmarshall"
-  digest = "1:0bbad9064a72a1d9ef9f2cb0f08277573a0861ec7fa0e796ddae09fa49509668"
+  digest = "1:87c8b7f408c0ed5914f1480c4fc5ef885506d821d4c291d8e1bd07a67d3700d0"
   name = "github.com/CanalTP/gonavitia"
   packages = [
     ".",
     "pbnavitia",
   ]
   pruneopts = "UT"
-  revision = "16a730388b0ad931ad3caf703f4e2857a126e96b"
+  revision = "a3ce585a971a23fd766f8a33b22a5330cf115d1b"
   source = "github.com/kinnou02/gonavitia"
 
 [[projects]]
