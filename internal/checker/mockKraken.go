@@ -58,11 +58,14 @@ func (m *MockManager) MainRoutingTest() (*gormungandr.Kraken, error) {
 }
 
 func (m *MockManager) startKraken(binary string) (*gormungandr.Kraken, error) {
-	m.pool.Client.PullImage(docker.PullImageOptions{
+	if err := m.pool.Client.PullImage(docker.PullImageOptions{
 		Repository:   "navitia/mock-kraken",
 		Tag:          getTag(),
 		OutputStream: os.Stdout,
-	}, docker.AuthConfiguration{})
+	}, docker.AuthConfiguration{}); err != nil {
+		return nil, err
+	}
+
 	options := dockertest.RunOptions{
 		Repository: "navitia/mock-kraken",
 		Tag:        getTag(),

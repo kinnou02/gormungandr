@@ -10,6 +10,7 @@ services:
 - docker
 script:
 - sudo apt install libzmq3-dev
+- docker pull navitia/mock-kraken:dev
 - make setup
 - make ci
 - make
