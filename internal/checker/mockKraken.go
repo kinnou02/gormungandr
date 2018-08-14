@@ -3,11 +3,23 @@ package checker
 import (
 	"fmt"
 	"net"
+	"os"
 	"time"
 
 	"github.com/CanalTP/gormungandr"
-	"gopkg.in/ory-am/dockertest.v3"
+	"github.com/ory/dockertest"
+	"github.com/ory/dockertest/docker"
 )
+
+// return the tag of the docker image to used, by default "dev" images are used
+// this can be override by settings the environement varriable "GORMUNGANDR_DOCKERTEST_TAG"
+func getTag() string {
+	tag := os.Getenv("GORMUNGANDR_DOCKERTEST_TAG")
+	if tag != "" {
+		return tag
+	}
+	return "dev"
+}
 
 // MockManager handle the creation of kraken mock
 // at the end of the test the manager must be close with Close() to release
@@ -46,9 +58,14 @@ func (m *MockManager) MainRoutingTest() (*gormungandr.Kraken, error) {
 }
 
 func (m *MockManager) startKraken(binary string) (*gormungandr.Kraken, error) {
+	m.pool.Client.PullImage(docker.PullImageOptions{
+		Repository:   "navitia/mock-kraken",
+		Tag:          getTag(),
+		OutputStream: os.Stdout,
+	}, docker.AuthConfiguration{})
 	options := dockertest.RunOptions{
 		Repository: "navitia/mock-kraken",
-		Tag:        "latest",
+		Tag:        getTag(),
 		Env:        []string{"KRAKEN_GENERAL_log_level=DEBUG"},
 		Cmd:        []string{fmt.Sprint("./", binary), "--GENERAL.zmq_socket", "tcp://*:30000"},
 	}

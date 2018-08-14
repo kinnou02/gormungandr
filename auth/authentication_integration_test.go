@@ -10,9 +10,9 @@ import (
 	"time"
 
 	_ "github.com/lib/pq"
+	"github.com/ory/dockertest"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
-	"gopkg.in/ory-am/dockertest.v3"
 )
 
 var dockerDB *sql.DB

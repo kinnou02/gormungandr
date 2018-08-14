@@ -26,7 +26,7 @@ type RouteScheduleRequest struct {
 	Duration         int32     `form:"duration"`
 	ForbiddenUris    []string  //mapping with Binding doesn't work
 	Depth            int32     `form:"depth"`
-	CurrentDatetime  time.Time `form:"_current_datetime"`
+	CurrentDatetime  time.Time `form:"_current_datetime" time_format:"20060102T150405"`
 	ItemsPerSchedule int32     `form:"items_per_schedule"`
 	DataFreshness    string    `form:"data_freshness"`
 	Filters          []string

@@ -136,3 +136,26 @@ func TestRouteSchedulesHeadsign(t *testing.T) {
 	assert.Equal("vjA", *displayInfo.Headsign)
 	assert.ElementsMatch([]string{"A00", "vjA"}, displayInfo.Headsigns)
 }
+
+func TestRouteSchedulesDisruptions(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test Docker in short mode.")
+	}
+	t.Parallel()
+	assert := assert.New(t)
+	require := require.New(t)
+	c, engine := gin.CreateTestContext(httptest.NewRecorder())
+	SetupApi(engine, mainRoutingTest, &NullPublisher{}, SkipAuth())
+
+	c.Request = httptest.NewRequest("GET", "/v1/coverage/foo/lines/A/route_schedules?from_datetime=20120801T000000&_current_datetime=20120801T050000", nil)
+	w := httptest.NewRecorder()
+	engine.ServeHTTP(w, c.Request)
+	require.Equal(200, w.Code)
+
+	var response gonavitia.RouteScheduleResponse
+	err := json.Unmarshal(w.Body.Bytes(), &response)
+	require.Nil(err)
+	assert.Nil(response.Error)
+	require.Len(response.RouteSchedules, 2)
+	//TODO add more tests when handling disruptions
+}

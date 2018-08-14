@@ -70,3 +70,7 @@
 [prune]
   go-tests = true
   unused-packages = true
+
+[[constraint]]
+  branch = "v3"
+  name = "github.com/ory/dockertest"
