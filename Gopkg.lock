@@ -13,7 +13,7 @@
   revision = "d6e3b3328b783f23731bc4d058875b0371ff8109"
 
 [[projects]]
-  branch = "unmarshall"
+  branch = "master"
   digest = "1:773d28fff2c5abd962e5db0ada655faa4849f7c29dc06f1891fc49cad6e1cc0e"
   name = "github.com/CanalTP/gonavitia"
   packages = [
@@ -21,8 +21,7 @@
     "pbnavitia",
   ]
   pruneopts = "UT"
-  revision = "a3ce585a971a23fd766f8a33b22a5330cf115d1b"
-  source = "github.com/kinnou02/gonavitia"
+  revision = "0dcb887a472bcba6ad0fe3cfbd005d827995bdd4"
 
 [[projects]]
   digest = "1:bf42be3cb1519bf8018dfd99720b1005ee028d947124cab3ccf965da59381df6"
