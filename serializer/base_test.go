@@ -66,9 +66,11 @@ func TestNewFeedPublisher(t *testing.T) {
 func TestNewNavitiaDatetime(t *testing.T) {
 	serializer := New()
 
-	assert.Equal(t, gonavitia.NavitiaDatetime(time.Unix(1525348246, 0).In(time.UTC)), serializer.NewNavitiaDatetime(1525348246))
+	value := serializer.NewNavitiaDatetime(1525348246)
+	assert.Equal(t, gonavitia.NavitiaDatetime(time.Unix(1525348246, 0).In(time.UTC)), value)
 	location, err := time.LoadLocation("Europe/Paris")
 	assert.NoError(t, err)
 	serializer.Location = location
-	assert.Equal(t, gonavitia.NavitiaDatetime(time.Unix(1525348246, 0).In(location)), serializer.NewNavitiaDatetime(1525348246))
+	value = serializer.NewNavitiaDatetime(1525348246)
+	assert.Equal(t, gonavitia.NavitiaDatetime(time.Unix(1525348246, 0).In(location)), value)
 }
