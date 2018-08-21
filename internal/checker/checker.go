@@ -65,13 +65,12 @@ func IsValidStopPoint(t *testing.T, sp *gonavitia.StopPoint, depth int) {
 	assert := assert.New(t)
 	assert.NotEmpty(sp.Name)
 	assert.NotEmpty(sp.Label)
-	//TODO: fail :(
 	require.NotNil(t, sp.Coord)
 	IsValidCoord(t, *sp.Coord)
 
 	//TODO: check comments
 	for _, m := range sp.PhysicalModes {
-		IsValidPhyscalMode(t, m)
+		IsValidPhysicalMode(t, m)
 	}
 	for _, m := range sp.CommercialModes {
 		IsValidCommercialMode(t, m)
@@ -110,20 +109,19 @@ func IsValidStopArea(t *testing.T, sa gonavitia.StopArea, depth int) {
 	assert := assert.New(t)
 	assert.NotEmpty(sa.Name)
 	assert.NotEmpty(sa.Label)
-	//TODO: fail :(
 	require.NotNil(t, sa.Coord)
 	IsValidCoord(t, *sa.Coord)
 
 	//TODO: check comments
 	for _, m := range sa.PhysicalModes {
-		IsValidPhyscalMode(t, m)
+		IsValidPhysicalMode(t, m)
 	}
 	for _, m := range sa.CommercialModes {
 		IsValidCommercialMode(t, m)
 	}
 }
 
-func IsValidPhyscalMode(t *testing.T, mode gonavitia.PhysicalMode) {
+func IsValidPhysicalMode(t *testing.T, mode gonavitia.PhysicalMode) {
 	assert := assert.New(t)
 	assert.NotEmpty(mode.Name)
 	assert.NotEmpty(mode.Id)

@@ -11,8 +11,8 @@ import (
 	"github.com/ory/dockertest/docker"
 )
 
-// return the tag of the docker image to used, by default "dev" images are used
-// this can be override by settings the environement varriable "GORMUNGANDR_DOCKERTEST_TAG"
+// return the tag of the docker image to be used, by default "dev" images are used
+// this can be overridden by setting the environment variable "GORMUNGANDR_DOCKERTEST_TAG"
 func getTag() string {
 	tag := os.Getenv("GORMUNGANDR_DOCKERTEST_TAG")
 	if tag != "" {
@@ -22,8 +22,8 @@ func getTag() string {
 }
 
 // MockManager handle the creation of kraken mock
-// at the end of the test the manager must be close with Close() to release
-// the ressources allocated, typically the container.
+// at the end of the test the manager must be closed with Close() to release
+// the resources allocated, typically the container.
 type MockManager struct {
 	pool      *dockertest.Pool
 	resources []*dockertest.Resource
