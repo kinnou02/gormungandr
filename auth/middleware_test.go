@@ -1,6 +1,8 @@
 package auth
 
 import (
+	"encoding/base64"
+	"fmt"
 	"net/http/httptest"
 	"testing"
 	"time"
@@ -32,6 +34,27 @@ func TestGetTokenBasicAuth(t *testing.T) {
 	assert.Equal(t, "mykeyé$€", getToken(c))
 
 	c.Request.SetBasicAuth("115aa17b-63d3-4a31-acd6-edebebd4d415", "")
+	assert.Equal(t, "115aa17b-63d3-4a31-acd6-edebebd4d415", getToken(c))
+}
+
+func TestGetTokenUnvalidBasicAuth(t *testing.T) {
+	t.Parallel()
+	c, _ := gin.CreateTestContext(httptest.NewRecorder())
+	c.Request = httptest.NewRequest("Get", "/", nil)
+
+	assert.Equal(t, "", getToken(c))
+
+	encoded := base64.StdEncoding.EncodeToString([]byte("mykey"))
+	c.Request.Header.Set("Authorization", fmt.Sprintf("Basic %s", encoded))
+	assert.Equal(t, "mykey", getToken(c))
+
+	encoded = base64.StdEncoding.EncodeToString([]byte("115aa17b-63d3-4a31-acd6-edebebd4d415"))
+	c.Request.Header.Set("Authorization", fmt.Sprintf("Basic %s", encoded))
+	assert.Equal(t, "115aa17b-63d3-4a31-acd6-edebebd4d415", getToken(c))
+
+	//this is a valid basic authentication and is handled by Request.BasicAuth()
+	encoded = base64.StdEncoding.EncodeToString([]byte("115aa17b-63d3-4a31-acd6-edebebd4d415:"))
+	c.Request.Header.Set("Authorization", fmt.Sprintf("Basic %s", encoded))
 	assert.Equal(t, "115aa17b-63d3-4a31-acd6-edebebd4d415", getToken(c))
 }
 
