@@ -27,6 +27,7 @@ func getTag() string {
 type MockManager struct {
 	pool      *dockertest.Pool
 	resources []*dockertest.Resource
+	Pulled    bool
 }
 
 func NewMockManager() (*MockManager, error) {
@@ -58,12 +59,15 @@ func (m *MockManager) MainRoutingTest() (*gormungandr.Kraken, error) {
 }
 
 func (m *MockManager) startKraken(binary string) (*gormungandr.Kraken, error) {
-	if err := m.pool.Client.PullImage(docker.PullImageOptions{
-		Repository:   "navitia/mock-kraken",
-		Tag:          getTag(),
-		OutputStream: os.Stdout,
-	}, docker.AuthConfiguration{}); err != nil {
-		return nil, err
+	if !m.Pulled {
+		if err := m.pool.Client.PullImage(docker.PullImageOptions{
+			Repository:   "navitia/mock-kraken",
+			Tag:          getTag(),
+			OutputStream: os.Stdout,
+		}, docker.AuthConfiguration{}); err != nil {
+			return nil, err
+		}
+		m.Pulled = true
 	}
 
 	options := dockertest.RunOptions{
