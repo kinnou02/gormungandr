@@ -26,7 +26,7 @@ type RouteScheduleRequest struct {
 	Duration         int32     `form:"duration"`
 	ForbiddenUris    []string  //mapping with Binding doesn't work
 	Depth            int32     `form:"depth"`
-	CurrentDatetime  time.Time `form:"_current_datetime"`
+	CurrentDatetime  time.Time `form:"_current_datetime" time_format:"20060102T150405"`
 	ItemsPerSchedule int32     `form:"items_per_schedule"`
 	DataFreshness    string    `form:"data_freshness"`
 	Filters          []string
@@ -67,8 +67,10 @@ func RouteSchedule(c *gin.Context, kraken *gormungandr.Kraken, request *RouteSch
 	c.JSON(status, r)
 	logger.Debug("handling stats")
 
+	//the original context must not be used in another goroutine, we have to copy it
+	readonlyContext := c.Copy()
 	go func() {
-		err = publisher.PublishRouteSchedule(*request, *r, *c.Copy())
+		err = publisher.PublishRouteSchedule(*request, *r, *readonlyContext)
 		if err != nil {
 			logger.Errorf("stat not sent %+v", err)
 		} else {
@@ -104,6 +106,10 @@ func BuildRequestRouteSchedule(req RouteScheduleRequest) *pbnavitia.Request {
 
 func getUrl(c *gin.Context) *url.URL {
 	u := location.Get(c)
+	if u == nil {
+		//if location doesn't give us an url, we use the one from gin
+		return c.Request.URL
+	}
 	u.RawQuery = c.Request.URL.RawQuery
 	u.Path = c.Request.URL.Path
 	return u

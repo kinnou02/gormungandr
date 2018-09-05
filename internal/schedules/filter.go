@@ -3,16 +3,11 @@ package schedules
 import (
 	"net/http"
 
-	"github.com/CanalTP/gonavitia"
 	"github.com/CanalTP/gormungandr"
 	"github.com/gin-gonic/gin"
 	"github.com/satori/go.uuid"
 	"github.com/sirupsen/logrus"
 )
-
-type Publisher interface {
-	PublishRouteSchedule(request RouteScheduleRequest, response gonavitia.RouteScheduleResponse, c gin.Context) error
-}
 
 func NoRouteHandler(kraken *gormungandr.Kraken, publisher Publisher) gin.HandlerFunc {
 	fn := func(c *gin.Context) {

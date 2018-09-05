@@ -21,7 +21,6 @@ import (
 	"github.com/rafaeljesus/rabbus"
 
 	"github.com/gin-contrib/cors"
-	"github.com/gin-contrib/location"
 	"github.com/gin-gonic/contrib/ginrus"
 	"github.com/gin-gonic/gin"
 	"github.com/newrelic/go-agent"
@@ -43,10 +42,6 @@ func setupRouter(config schedules.Config) *gin.Engine {
 		AllowHeaders:     []string{"Access-Control-Request-Headers", "Authorization"},
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
-	}))
-	r.Use(location.New(location.Config{
-		Scheme: "http",
-		Host:   "navitia.io",
 	}))
 
 	if len(config.NewRelicLicense) > 0 {
@@ -117,8 +112,8 @@ func main() {
 	logger.Info("starting schedules")
 
 	kraken := gormungandr.NewKraken("default", config.Kraken, config.Timeout)
-	router := setupRouter(config)
-	cov := router.Group("/v1/coverage/:coverage")
+	authOption := schedules.SkipAuth()
+	var statPublisher *auth.StatPublisher
 
 	if !config.SkipAuth {
 		//disable database if authentication isn't used
@@ -140,7 +135,7 @@ func main() {
 			authCache = cache.New(config.AuthCacheTimeout, config.AuthCacheTimeout*2)
 		}
 
-		cov.Use(auth.AuthenticationMiddleware(db, authCache))
+		authOption = schedules.Auth(auth.AuthenticationMiddleware(db, authCache))
 	}
 
 	if len(config.PprofListen) != 0 {
@@ -150,7 +145,6 @@ func main() {
 		}()
 	}
 
-	var statPublisher *auth.StatPublisher
 	if !config.SkipStats {
 		var rmq *rabbus.Rabbus
 		rmq, err = rabbus.New(
@@ -178,7 +172,8 @@ func main() {
 		statPublisher = auth.NewStatPublisher(rmq, config.StatsExchange, 2*time.Second)
 	}
 
-	cov.GET("/*filter", schedules.NoRouteHandler(kraken, statPublisher))
+	router := setupRouter(config)
+	schedules.SetupApi(router, kraken, statPublisher, authOption)
 
 	srv := &http.Server{
 		Addr:    config.Listen,

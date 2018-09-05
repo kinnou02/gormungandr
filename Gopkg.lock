@@ -14,17 +14,17 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:3e4d8835b43369beb7efa98f0c26ca1a9c10c40b2c9b74deaddb96b3463159de"
+  digest = "1:773d28fff2c5abd962e5db0ada655faa4849f7c29dc06f1891fc49cad6e1cc0e"
   name = "github.com/CanalTP/gonavitia"
   packages = [
     ".",
     "pbnavitia",
   ]
   pruneopts = "UT"
-  revision = "ba06c126d920c476db1fe3867f202ed34ea13f34"
+  revision = "0dcb887a472bcba6ad0fe3cfbd005d827995bdd4"
 
 [[projects]]
-  digest = "1:05c1f0aa5c5e42e1b85cbe1a9c9c74adfd1e5d0c1b839b2924371aed51e9eb64"
+  digest = "1:bf42be3cb1519bf8018dfd99720b1005ee028d947124cab3ccf965da59381df6"
   name = "github.com/Microsoft/go-winio"
   packages = ["."]
   pruneopts = "UT"
@@ -48,12 +48,12 @@
   revision = "3a771d992973f24aa725d07868b467d1ddfceafb"
 
 [[projects]]
-  digest = "1:4ba637038f22c9065994c0cd734118fc75e0c744f855fd3edbd3b923d1f41d44"
+  digest = "1:2209584c0f7c9b68c23374e659357ab546e1b70eec2761f03280f69a8fd23d77"
   name = "github.com/cenkalti/backoff"
   packages = ["."]
   pruneopts = "UT"
-  revision = "61153c768f31ee5f130071d08fc82b85208528de"
-  version = "v1.1.0"
+  revision = "2ea60e5f094469f9e65adb9cd103795b73ae743e"
+  version = "v2.0.0"
 
 [[projects]]
   branch = "master"
@@ -70,40 +70,6 @@
   pruneopts = "UT"
   revision = "346938d642f2ec3594ed81d874461961cd0faa76"
   version = "v1.1.0"
-
-[[projects]]
-  branch = "master"
-  digest = "1:ba6c4b3df83fb9a4e41005181a3a98e09c12f94f68aa4935ff77baea9cb0ac70"
-  name = "github.com/docker/docker"
-  packages = [
-    "api/types",
-    "api/types/blkiodev",
-    "api/types/container",
-    "api/types/filters",
-    "api/types/mount",
-    "api/types/network",
-    "api/types/registry",
-    "api/types/strslice",
-    "api/types/swarm",
-    "api/types/swarm/runtime",
-    "api/types/versions",
-    "opts",
-    "pkg/archive",
-    "pkg/fileutils",
-    "pkg/homedir",
-    "pkg/idtools",
-    "pkg/ioutils",
-    "pkg/jsonmessage",
-    "pkg/longpath",
-    "pkg/mount",
-    "pkg/pools",
-    "pkg/stdcopy",
-    "pkg/system",
-    "pkg/term",
-    "pkg/term/windows",
-  ]
-  pruneopts = "UT"
-  revision = "cbde00b44273a584bed2ee3513db68924b4a6dba"
 
 [[projects]]
   digest = "1:87dcb59127512b84097086504c16595cf8fef35b9e0bfca565dfc06e198158d7"
@@ -128,14 +94,6 @@
   pruneopts = "UT"
   revision = "c2828203cd70a50dcccfb2761f8b1f8ceef9a8e9"
   version = "v1.4.7"
-
-[[projects]]
-  digest = "1:ef99b8925cb8a662a4cc98bb84cc3b431e45b8d8570957b9a2d053b467b9ec03"
-  name = "github.com/fsouza/go-dockerclient"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "ca33ff277b527ce11b793e62f9ba244129b01caf"
-  version = "v1.2.0"
 
 [[projects]]
   digest = "1:56a43d8f03f5f60fa0a5e8b66903a54a97ae52500d8497059ea8c3d8fbabafa4"
@@ -180,7 +138,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:7e01d07459a7a5ac5333c3d76e105e3c8ff4eb7479556a6f5b8177fdc159317f"
+  digest = "1:1c91826efc2e83af80e282ed08572f8ea7edd6c582dd1ac02228d5f414cf3a69"
   name = "github.com/gin-gonic/gin"
   packages = [
     ".",
@@ -192,14 +150,6 @@
   revision = "6d913fc343cfac80d656db5be67a0ffb1323ba0d"
 
 [[projects]]
-  digest = "1:9a688317f3231e0175b3429033f44411906c0ce119361b7b5019d01375f8cff7"
-  name = "github.com/gogo/protobuf"
-  packages = ["proto"]
-  pruneopts = "UT"
-  revision = "1adfc126b41513cc696b209667c8656ea7aac67c"
-  version = "v1.0.0"
-
-[[projects]]
   digest = "1:ffc060c551980d37ee9e428ef528ee2813137249ccebb0bfc412ef83071cac91"
   name = "github.com/golang/protobuf"
   packages = ["proto"]
@@ -209,7 +159,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:ac64f01acc5eeea9dde40e326de6b6471e501392ec06524c3b51033aa50789bc"
+  digest = "1:a361611b8c8c75a1091f00027767f7779b29cb37c456a71b8f2604c88057ab40"
   name = "github.com/hashicorp/hcl"
   packages = [
     ".",
@@ -236,7 +186,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:81a86a5e3dff6f6785c080d57c5c5f225a3dc5ff0e392ccba4f7bd0dab5b5299"
+  digest = "1:1e537dfb7b4d543e25efa2c812084dd65736f8010979c1b7e167a5b876563199"
   name = "github.com/lib/pq"
   packages = [
     ".",
@@ -294,7 +244,7 @@
   version = "1.0.0"
 
 [[projects]]
-  digest = "1:1d03e29aca6bbef7f9a6ec189871cddd3798f4c53abed4eaf751c69e54a6b932"
+  digest = "1:339074a813549d7067ec6083fe9dc2c397a2fc70616c5374166ebb9b3fd2d241"
   name = "github.com/newrelic/go-agent"
   packages = [
     ".",
@@ -319,7 +269,7 @@
   version = "v1.0.0-rc1"
 
 [[projects]]
-  digest = "1:7c5c09ec84d18b0dc5ec0de36c1b8d12d3bf1815d04b90dc50ab082f3b8f13f1"
+  digest = "1:11db38d694c130c800d0aefb502fb02519e514dc53d9804ce51d1ad25ec27db6"
   name = "github.com/opencontainers/image-spec"
   packages = [
     "specs-go",
@@ -330,15 +280,46 @@
   version = "v1.0.1"
 
 [[projects]]
-  digest = "1:dc10deba6d33a52f3046c13b04b3e5e96368de45ec686e8c7124c444f95798eb"
+  digest = "1:e1945a9a8aff7a8504d8e3143e40bc891ccadf9ba1b2f615e8227729ce828c34"
   name = "github.com/opencontainers/runc"
+  packages = ["libcontainer/user"]
+  pruneopts = "UT"
+  revision = "4fc53a81fb7c994640722ac585fa9ca548971871"
+  version = "v1.0.0-rc5"
+
+[[projects]]
+  branch = "v3"
+  digest = "1:14c238cca88c1218f1c8a1a2638cd014e42dc02c1e1603fc88f8c521d2f91e8c"
+  name = "github.com/ory/dockertest"
   packages = [
-    "libcontainer/system",
-    "libcontainer/user",
+    ".",
+    "docker",
+    "docker/opts",
+    "docker/pkg/archive",
+    "docker/pkg/fileutils",
+    "docker/pkg/homedir",
+    "docker/pkg/idtools",
+    "docker/pkg/ioutils",
+    "docker/pkg/jsonmessage",
+    "docker/pkg/longpath",
+    "docker/pkg/mount",
+    "docker/pkg/pools",
+    "docker/pkg/stdcopy",
+    "docker/pkg/system",
+    "docker/pkg/term",
+    "docker/pkg/term/windows",
+    "docker/types",
+    "docker/types/blkiodev",
+    "docker/types/container",
+    "docker/types/filters",
+    "docker/types/mount",
+    "docker/types/network",
+    "docker/types/registry",
+    "docker/types/strslice",
+    "docker/types/versions",
   ]
   pruneopts = "UT"
-  revision = "baf6536d6259209c3edfa2b22237af82942d3dfa"
-  version = "v0.1.1"
+  revision = "272abdf5bd73ac256883a7648d39efdd470f0998"
 
 [[projects]]
   digest = "1:808cdddf087fb64baeae67b8dfaee2069034d9704923a3cb8bd96a995421a625"
@@ -382,7 +363,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:d9bd896a2b23dd15aa40fbfb01711adebaf67b2a523223ca36e1c96fd826dacf"
+  digest = "1:849bcc1b3b886f46f3bd29c64bb824050f53f1898fe88033c8c807f6a1229e0b"
   name = "github.com/prometheus/client_golang"
   packages = [
     "prometheus",
@@ -393,7 +374,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:53a76eb11bdc815fcf0c757a9648fda0ab6887da13f07587181ff2223b67956c"
+  digest = "1:32d10bdfa8f09ecf13598324dba86ab891f11db3c538b6a34d1c3b5b99d7c36b"
   name = "github.com/prometheus/client_model"
   packages = ["go"]
   pruneopts = "UT"
@@ -401,7 +382,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:9162d980760d50b8c8abe237ed4ec200f44fcc837b921df71ae210648938346f"
+  digest = "1:d8eb54ba064d155389fdb417aca96e928404dd1a8054570da25c071096d2bd9b"
   name = "github.com/prometheus/common"
   packages = [
     "expfmt",
@@ -413,7 +394,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:3766f7bb195b9bbddb58ccfbbb807ca65136ecb30e725fd56fcb38c0839b0443"
+  digest = "1:f261e077bd68fcb94edbc27ca4964fca036aebb79423f1e5cd7389df18e38b7f"
   name = "github.com/prometheus/procfs"
   packages = [
     ".",
@@ -425,7 +406,7 @@
   revision = "780932d4fbbe0e69b84c34c20f5c8d0981e109ea"
 
 [[projects]]
-  digest = "1:cf1c139beac07e349f89a1bcbc7654d9fcc0b8cfd491b13d27eb0905dde9fc9e"
+  digest = "1:6681e9ce9a7247a1c221165342e62a02e531fe8d8140f6b4ae7674af5a4f60fa"
   name = "github.com/rafaeljesus/rabbus"
   packages = [
     ".",
@@ -468,7 +449,7 @@
   version = "0.3.0"
 
 [[projects]]
-  digest = "1:e4168390bb505389d58a8f5bca9e3cd9a34ffb32fbb00c4df5c0ca30fddc3d74"
+  digest = "1:fe0b7f0c9a5e5511001fe085b0a156b29266012cd984a63e4059a30e84bba03a"
   name = "github.com/spf13/afero"
   packages = [
     ".",
@@ -527,7 +508,7 @@
   version = "v0.1"
 
 [[projects]]
-  digest = "1:269e75c931775573d98baa34fa60e48367ed4e31534bf09036a55e3c1ee7cfd2"
+  digest = "1:4137519ff9ad7c8f8fe9ffafc789ab397f447830cd9758632dc4c993ca1be2c2"
   name = "github.com/stretchr/testify"
   packages = [
     "assert",
@@ -556,18 +537,15 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:ce1f391e0e8c5e3c635dc2c712b037a2d0fd4241cc5648f23ca071565dd385f2"
+  digest = "1:76ee51c3f468493aff39dbacc401e8831fbb765104cbf613b89bef01cf4bad70"
   name = "golang.org/x/net"
-  packages = [
-    "context",
-    "context/ctxhttp",
-  ]
+  packages = ["context"]
   pruneopts = "UT"
   revision = "61147c48b25b599e5b561d2e9c4f3e1ef489ca41"
 
 [[projects]]
   branch = "master"
-  digest = "1:590f8699f3d4653a3fb64f67b271ccd25fe03284b69fbf64ec284a2184ba49cb"
+  digest = "1:9bb501ffdf18a0cc48f2e7f45eeeb27428198bccadb320e4a39fdc2126527efd"
   name = "golang.org/x/sys"
   packages = [
     "unix",
@@ -577,7 +555,7 @@
   revision = "dd2ff4accc098aceecb86b36eaa7829b2a17b1c9"
 
 [[projects]]
-  digest = "1:038003d098ffc345c4c5c6d47bcc6920b2649ee0c0d557162e54e75c76cadf8b"
+  digest = "1:8029e9743749d4be5bc9f7d42ea1659471767860f0cdc34d37c3111bd308a295"
   name = "golang.org/x/text"
   packages = [
     "internal/gen",
@@ -608,14 +586,6 @@
   version = "v8.18.2"
 
 [[projects]]
-  digest = "1:7793f293ffba4ec2f784f3d83e28f2f95f876ac320a612e43fb9282a44b2c032"
-  name = "gopkg.in/ory-am/dockertest.v3"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "15c8e8835bba04e0d7c2b57958ffe294d5e643dc"
-  version = "v3.1.6"
-
-[[projects]]
   digest = "1:342378ac4dcb378a5448dd723f0784ae519383532f5e70ade24132c4c8693202"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
@@ -638,6 +608,8 @@
     "github.com/lib/pq",
     "github.com/newrelic/go-agent",
     "github.com/newrelic/go-agent/_integrations/nrgin/v1",
+    "github.com/ory/dockertest",
+    "github.com/ory/dockertest/docker",
     "github.com/patrickmn/go-cache",
     "github.com/pebbe/zmq4",
     "github.com/pkg/errors",
@@ -653,7 +625,6 @@
     "github.com/stretchr/testify/mock",
     "github.com/stretchr/testify/require",
     "gopkg.in/DATA-DOG/go-sqlmock.v1",
-    "gopkg.in/ory-am/dockertest.v3",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1
