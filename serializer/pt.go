@@ -8,7 +8,7 @@ import (
 	"github.com/golang/protobuf/proto"
 )
 
-func NewPtDisplayInfoForRoute(pb *pbnavitia.PtDisplayInfo) *gonavitia.PtDisplayInfo {
+func (s *Serializer) NewPtDisplayInfoForRoute(pb *pbnavitia.PtDisplayInfo) *gonavitia.PtDisplayInfo {
 	if pb == nil {
 		return nil
 	}
@@ -33,11 +33,11 @@ func NewPtDisplayInfoForRoute(pb *pbnavitia.PtDisplayInfo) *gonavitia.PtDisplayI
 
 }
 
-func NewPtDisplayInfoForVJ(pb *pbnavitia.PtDisplayInfo) *gonavitia.PtDisplayInfo {
+func (s *Serializer) NewPtDisplayInfoForVJ(pb *pbnavitia.PtDisplayInfo) *gonavitia.PtDisplayInfo {
 	if pb == nil {
 		return nil
 	}
-	info := NewPtDisplayInfoForRoute(pb)
+	info := s.NewPtDisplayInfoForRoute(pb)
 	info.Description = proto.String(pb.GetDescription())
 	info.PhysicalMode = proto.String(pb.GetPhysicalMode())
 	info.Headsign = proto.String(pb.GetHeadsign())
@@ -45,11 +45,11 @@ func NewPtDisplayInfoForVJ(pb *pbnavitia.PtDisplayInfo) *gonavitia.PtDisplayInfo
 		info.Headsigns = make([]string, 0, len(pb.Headsigns))
 		info.Headsigns = append(info.Headsigns, pb.Headsigns...)
 	}
-	info.Equipments = NewEquipments(pb.HasEquipments)
+	info.Equipments = s.NewEquipments(pb.HasEquipments)
 	return info
 }
 
-func NewAdditionalInformations(pb []pbnavitia.SectionAdditionalInformationType) []string {
+func (s *Serializer) NewAdditionalInformations(pb []pbnavitia.SectionAdditionalInformationType) []string {
 	infos := make([]string, 0, len(pb))
 	for _, v := range pb {
 		additionalInfo := strings.ToLower(v.Enum().String())
@@ -58,7 +58,7 @@ func NewAdditionalInformations(pb []pbnavitia.SectionAdditionalInformationType) 
 	return infos
 }
 
-func NewEquipments(pb *pbnavitia.HasEquipments) []string {
+func (s *Serializer) NewEquipments(pb *pbnavitia.HasEquipments) []string {
 	if pb == nil {
 		return make([]string, 0)
 	}
@@ -70,34 +70,34 @@ func NewEquipments(pb *pbnavitia.HasEquipments) []string {
 	return equipments
 }
 
-func NewPhysicalModes(pb []*pbnavitia.PhysicalMode) []gonavitia.PhysicalMode {
+func (s *Serializer) NewPhysicalModes(pb []*pbnavitia.PhysicalMode) []gonavitia.PhysicalMode {
 	slice := make([]gonavitia.PhysicalMode, 0, len(pb))
 	for _, v := range pb {
 		if v != nil {
-			slice = append(slice, NewPhysicalMode(*v))
+			slice = append(slice, s.NewPhysicalMode(*v))
 		}
 	}
 	return slice
 }
 
-func NewPhysicalMode(pb pbnavitia.PhysicalMode) gonavitia.PhysicalMode {
+func (s *Serializer) NewPhysicalMode(pb pbnavitia.PhysicalMode) gonavitia.PhysicalMode {
 	return gonavitia.PhysicalMode{
 		Id:   pb.GetUri(),
 		Name: pb.GetName(),
 	}
 }
 
-func NewCommercialModes(pb []*pbnavitia.CommercialMode) []gonavitia.CommercialMode {
+func (s *Serializer) NewCommercialModes(pb []*pbnavitia.CommercialMode) []gonavitia.CommercialMode {
 	slice := make([]gonavitia.CommercialMode, 0, len(pb))
 	for _, v := range pb {
 		if v != nil {
-			slice = append(slice, NewCommercialMode(*v))
+			slice = append(slice, s.NewCommercialMode(*v))
 		}
 	}
 	return slice
 }
 
-func NewCommercialMode(pb pbnavitia.CommercialMode) gonavitia.CommercialMode {
+func (s *Serializer) NewCommercialMode(pb pbnavitia.CommercialMode) gonavitia.CommercialMode {
 	return gonavitia.CommercialMode{
 		Id:   pb.GetUri(),
 		Name: pb.GetName(),

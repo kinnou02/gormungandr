@@ -39,38 +39,38 @@ func make_journey() *pbnavitia.Journey {
 }
 
 func TestNewSectionNil(t *testing.T) {
-	assert.Nil(t, NewSection(nil))
+	assert.Nil(t, New().NewSection(nil))
 }
 
 func TestNewSection(t *testing.T) {
-	section := NewSection(make_section())
+	section := New().NewSection(make_section())
 	assert.Equal(t, *section.From.Id, "uri:from")
 	assert.Equal(t, *section.To.Id, "uri:to")
 }
 
 func TestNewJourneyNil(t *testing.T) {
-	assert.Nil(t, NewJourney(nil))
+	assert.Nil(t, New().NewJourney(nil))
 }
 
 func TestNewJourneyDirectPath(t *testing.T) {
 	pb_journey := make_journey()
-	journey := NewJourney(pb_journey)
+	journey := New().NewJourney(pb_journey)
 	assert.Nil(t, journey.From)
 	assert.Nil(t, journey.To)
 	assert.Equal(t, journey.Duration, *pb_journey.Duration)
-	assert.Equal(t, journey.DepartureDateTime, gonavitia.NavitiaDatetime(time.Unix(1000, 0)))
-	assert.Equal(t, journey.ArrivalDateTime, gonavitia.NavitiaDatetime(time.Unix(1060, 0)))
+	assert.Equal(t, journey.DepartureDateTime, gonavitia.NavitiaDatetime(time.Unix(1000, 0).In(time.UTC)))
+	assert.Equal(t, journey.ArrivalDateTime, gonavitia.NavitiaDatetime(time.Unix(1060, 0).In(time.UTC)))
 	assert.Equal(t, journey.NbTransfers, *pb_journey.NbTransfers)
 	assert.Equal(t, len(journey.Sections), len(pb_journey.Sections))
 }
 
 func TestNewJourneyResponseNil(t *testing.T) {
-	assert.Nil(t, NewJourneysReponse(nil))
+	assert.Nil(t, New().NewJourneysReponse(nil))
 }
 
 func TestNewJourneyResponseEmpty(t *testing.T) {
 	pb_response := pbnavitia.Response{}
-	response := NewJourneysReponse(&pb_response)
+	response := New().NewJourneysReponse(&pb_response)
 	assert.Equal(t, len(response.Journeys), 0)
 }
 
@@ -78,7 +78,7 @@ func TestNewJourneyResponseOne(t *testing.T) {
 	pb_response := pbnavitia.Response{
 		Journeys: []*pbnavitia.Journey{make_journey()},
 	}
-	response := NewJourneysReponse(&pb_response)
+	response := New().NewJourneysReponse(&pb_response)
 	assert.Equal(t, len(response.Journeys), 1)
 }
 
@@ -89,19 +89,19 @@ func TestNewJourneyResponseTwo(t *testing.T) {
 			make_journey(),
 		},
 	}
-	response := NewJourneysReponse(&pb_response)
+	response := New().NewJourneysReponse(&pb_response)
 	assert.Equal(t, len(response.Journeys), 2)
 }
 
 func TestNewLinksFromUriNil(t *testing.T) {
-	assert.Nil(t, NewLinksFromUris(nil))
+	assert.Nil(t, New().NewLinksFromUris(nil))
 }
 
 func TestNewLinksFromUriOne(t *testing.T) {
 	pb := pbnavitia.Uris{
 		Company: proto.String("foo"),
 	}
-	res := NewLinksFromUris(&pbnavitia.PtDisplayInfo{Uris: &pb})
+	res := New().NewLinksFromUris(&pbnavitia.PtDisplayInfo{Uris: &pb})
 	assert.Equal(t, len(res), 1)
 	assert.Equal(t, *res[0].Id, "foo")
 	assert.Equal(t, *res[0].Type, "company")
@@ -112,7 +112,7 @@ func TestNewLinksFromUriTwo(t *testing.T) {
 		Company:      proto.String("foo"),
 		PhysicalMode: proto.String("pmode"),
 	}
-	res := NewLinksFromUris(&pbnavitia.PtDisplayInfo{Uris: &pb})
+	res := New().NewLinksFromUris(&pbnavitia.PtDisplayInfo{Uris: &pb})
 	assert.Equal(t, len(res), 2)
 	assert.Equal(t, *res[0].Id, "foo")
 	assert.Equal(t, *res[0].Type, "company")

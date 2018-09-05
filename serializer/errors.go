@@ -5,7 +5,7 @@ import (
 	"github.com/CanalTP/gonavitia/pbnavitia"
 )
 
-func NewError(pb *pbnavitia.Error) *gonavitia.Error {
+func (s *Serializer) NewError(pb *pbnavitia.Error) *gonavitia.Error {
 	if pb == nil {
 		return nil
 	}
@@ -13,11 +13,11 @@ func NewError(pb *pbnavitia.Error) *gonavitia.Error {
 	return &gonavitia.Error{
 		Id:      &id,
 		Message: pb.Message,
-		Code:    NewErrorCode(pb),
+		Code:    s.NewErrorCode(pb),
 	}
 }
 
-func NewErrorCode(pb *pbnavitia.Error) gonavitia.ErrorCode {
+func (s *Serializer) NewErrorCode(pb *pbnavitia.Error) gonavitia.ErrorCode {
 	if pb == nil {
 		return gonavitia.ErrorOk
 	}

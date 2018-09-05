@@ -2,45 +2,44 @@ package serializer
 
 import "github.com/CanalTP/gonavitia"
 import "github.com/CanalTP/gonavitia/pbnavitia"
-import "time"
 import "strings"
 import "github.com/golang/protobuf/proto"
 
-func NewJourneysReponse(pb *pbnavitia.Response) *gonavitia.JourneysResponse {
+func (s *Serializer) NewJourneysReponse(pb *pbnavitia.Response) *gonavitia.JourneysResponse {
 	if pb == nil {
 		return nil
 	}
 	r := gonavitia.JourneysResponse{}
 	for _, pb_journey := range pb.Journeys {
-		r.Journeys = append(r.Journeys, NewJourney(pb_journey))
+		r.Journeys = append(r.Journeys, s.NewJourney(pb_journey))
 	}
 	return &r
 }
 
-func NewJourney(pb *pbnavitia.Journey) *gonavitia.Journey {
+func (s *Serializer) NewJourney(pb *pbnavitia.Journey) *gonavitia.Journey {
 	if pb == nil {
 		return nil
 	}
 	journey := gonavitia.Journey{
-		From:              NewPlace(pb.Origin),
-		To:                NewPlace(pb.Destination),
+		From:              s.NewPlace(pb.Origin),
+		To:                s.NewPlace(pb.Destination),
 		Duration:          pb.GetDuration(),
 		NbTransfers:       pb.GetNbTransfers(),
-		DepartureDateTime: gonavitia.NavitiaDatetime(time.Unix(int64(pb.GetDepartureDateTime()), 0)),
-		ArrivalDateTime:   gonavitia.NavitiaDatetime(time.Unix(int64(pb.GetArrivalDateTime()), 0)),
-		RequestedDateTime: gonavitia.NavitiaDatetime(time.Unix(int64(pb.GetRequestedDateTime()), 0)),
+		DepartureDateTime: s.NewNavitiaDatetime(int64(pb.GetDepartureDateTime())),
+		ArrivalDateTime:   s.NewNavitiaDatetime(int64(pb.GetArrivalDateTime())),
+		RequestedDateTime: s.NewNavitiaDatetime(int64(pb.GetRequestedDateTime())),
 		Status:            pb.GetMostSeriousDisruptionEffect(),
-		Durations:         NewDurations(pb.Durations),
-		Distances:         NewDistances(pb.Distances),
+		Durations:         s.NewDurations(pb.Durations),
+		Distances:         s.NewDistances(pb.Distances),
 		Tags:              make([]string, 0),
 	}
 	for _, pb_section := range pb.Sections {
-		journey.Sections = append(journey.Sections, NewSection(pb_section))
+		journey.Sections = append(journey.Sections, s.NewSection(pb_section))
 	}
 	return &journey
 }
 
-func NewSection(pb *pbnavitia.Section) *gonavitia.Section {
+func (s *Serializer) NewSection(pb *pbnavitia.Section) *gonavitia.Section {
 	if pb == nil {
 		return nil
 	}
@@ -56,25 +55,25 @@ func NewSection(pb *pbnavitia.Section) *gonavitia.Section {
 	}
 	section := gonavitia.Section{
 		Id:                pb.GetId(),
-		From:              NewPlace(pb.Origin),
-		To:                NewPlace(pb.Destination),
-		DepartureDateTime: gonavitia.NavitiaDatetime(time.Unix(int64(pb.GetBeginDateTime()), 0)),
-		ArrivalDateTime:   gonavitia.NavitiaDatetime(time.Unix(int64(pb.GetEndDateTime()), 0)),
+		From:              s.NewPlace(pb.Origin),
+		To:                s.NewPlace(pb.Destination),
+		DepartureDateTime: s.NewNavitiaDatetime(int64(pb.GetBeginDateTime())),
+		ArrivalDateTime:   s.NewNavitiaDatetime(int64(pb.GetEndDateTime())),
 		Duration:          pb.GetDuration(),
 		Type:              strings.ToLower(pb.GetType().String()),
-		GeoJson:           NewGeoJson(pb),
+		GeoJson:           s.NewGeoJson(pb),
 		Mode:              mode,
 		TransferType:      transferType,
-		DisplayInfo:       NewPtDisplayInfoForVJ(pb.PtDisplayInformations),
-		Co2Emission:       NewCo2Emission(pb.Co2Emission),
-		AdditionalInfo:    NewAdditionalInformations(pb.AdditionalInformations),
-		Links:             NewLinksFromUris(pb.PtDisplayInformations),
+		DisplayInfo:       s.NewPtDisplayInfoForVJ(pb.PtDisplayInformations),
+		Co2Emission:       s.NewCo2Emission(pb.Co2Emission),
+		AdditionalInfo:    s.NewAdditionalInformations(pb.AdditionalInformations),
+		Links:             s.NewLinksFromUris(pb.PtDisplayInformations),
 	}
 
 	return &section
 }
 
-func NewDurations(pb *pbnavitia.Durations) *gonavitia.Durations {
+func (s *Serializer) NewDurations(pb *pbnavitia.Durations) *gonavitia.Durations {
 	if pb == nil {
 		return nil
 	}
@@ -88,7 +87,7 @@ func NewDurations(pb *pbnavitia.Durations) *gonavitia.Durations {
 	return &durations
 }
 
-func NewDistances(pb *pbnavitia.Distances) *gonavitia.Distances {
+func (s *Serializer) NewDistances(pb *pbnavitia.Distances) *gonavitia.Distances {
 	if pb == nil {
 		return nil
 	}
@@ -101,7 +100,7 @@ func NewDistances(pb *pbnavitia.Distances) *gonavitia.Distances {
 	return &distances
 }
 
-func NewCo2Emission(pb *pbnavitia.Co2Emission) *gonavitia.Amount {
+func (s *Serializer) NewCo2Emission(pb *pbnavitia.Co2Emission) *gonavitia.Amount {
 	if pb == nil {
 		return nil
 	}
@@ -113,25 +112,25 @@ func NewCo2Emission(pb *pbnavitia.Co2Emission) *gonavitia.Amount {
 
 }
 
-func NewLinksFromUris(pb *pbnavitia.PtDisplayInfo) []gonavitia.Link {
+func (s *Serializer) NewLinksFromUris(pb *pbnavitia.PtDisplayInfo) []gonavitia.Link {
 	if pb == nil || pb.Uris == nil {
 		return nil
 	}
 	uris := pb.Uris
 	res := make([]gonavitia.Link, 0)
-	res = appendLinksFromUri(uris.Company, "company", &res)
-	res = appendLinksFromUri(uris.VehicleJourney, "vehicle_journey", &res)
-	res = appendLinksFromUri(uris.Line, "line", &res)
-	res = appendLinksFromUri(uris.Route, "route", &res)
-	res = appendLinksFromUri(uris.CommercialMode, "commercial_mode", &res)
-	res = appendLinksFromUri(uris.PhysicalMode, "physical_mode", &res)
-	res = appendLinksFromUri(uris.Network, "network", &res)
-	res = appendLinksFromUri(uris.Note, "note", &res)
-	res = appendLinksFromUri(uris.JourneyPattern, "journey_pattern", &res)
+	res = s.appendLinksFromUri(uris.Company, "company", &res)
+	res = s.appendLinksFromUri(uris.VehicleJourney, "vehicle_journey", &res)
+	res = s.appendLinksFromUri(uris.Line, "line", &res)
+	res = s.appendLinksFromUri(uris.Route, "route", &res)
+	res = s.appendLinksFromUri(uris.CommercialMode, "commercial_mode", &res)
+	res = s.appendLinksFromUri(uris.PhysicalMode, "physical_mode", &res)
+	res = s.appendLinksFromUri(uris.Network, "network", &res)
+	res = s.appendLinksFromUri(uris.Note, "note", &res)
+	res = s.appendLinksFromUri(uris.JourneyPattern, "journey_pattern", &res)
 	return res
 }
 
-func appendLinksFromUri(pb *string, typ string, links *[]gonavitia.Link) []gonavitia.Link {
+func (s *Serializer) appendLinksFromUri(pb *string, typ string, links *[]gonavitia.Link) []gonavitia.Link {
 	if pb == nil {
 		return *links
 	}

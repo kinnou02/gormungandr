@@ -1,4 +1,4 @@
-VERSION := $(shell git describe --tag --always)
+VERSION := $(shell git describe --tag --always --dirty)
 
 .PHONY: setup
 setup: ## Install all the build and lint dependencies

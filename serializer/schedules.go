@@ -2,7 +2,6 @@ package serializer
 
 import (
 	"strings"
-	"time"
 
 	"github.com/CanalTP/gonavitia"
 	"github.com/CanalTP/gonavitia/pbnavitia"
@@ -11,31 +10,32 @@ import (
 
 const maxUInt64 = 18446744073709551615
 
-func NewRouteSchedulesResponse(request *pbnavitia.Request, pb *pbnavitia.Response) *gonavitia.RouteScheduleResponse {
+func (s *Serializer) NewRouteSchedulesResponse(request *pbnavitia.Request, pb *pbnavitia.Response) *gonavitia.RouteScheduleResponse {
 	if pb == nil {
 		return nil
 	}
+	s.Init(pb.Metadatas)
 	response := gonavitia.RouteScheduleResponse{
-		Error:          NewError(pb.Error),
+		Error:          s.NewError(pb.Error),
 		RouteSchedules: make([]*gonavitia.RouteSchedule, 0, len(pb.RouteSchedules)),
-		Pagination:     NewPagination(pb.Pagination),
+		Pagination:     s.NewPagination(pb.Pagination),
 		FeedPublishers: make([]*gonavitia.FeedPublisher, 0, len(pb.FeedPublishers)),
 		Links:          make([]gonavitia.Link, 0),
-		Context:        NewContext(request, pb),
+		Context:        s.NewContext(request, pb),
 		Exceptions:     make([]struct{}, 0),
 		Notes:          make([]struct{}, 0),
 		Disruptions:    make([]struct{}, 0),
 	}
 	for _, r := range pb.RouteSchedules {
-		response.RouteSchedules = append(response.RouteSchedules, NewRouteSchedule(r))
+		response.RouteSchedules = append(response.RouteSchedules, s.NewRouteSchedule(r))
 	}
 	for _, f := range pb.FeedPublishers {
-		response.FeedPublishers = append(response.FeedPublishers, NewFeedPublisher(f))
+		response.FeedPublishers = append(response.FeedPublishers, s.NewFeedPublisher(f))
 	}
 	return &response
 }
 
-func NewRouteSchedule(pb *pbnavitia.RouteSchedule) *gonavitia.RouteSchedule {
+func (s *Serializer) NewRouteSchedule(pb *pbnavitia.RouteSchedule) *gonavitia.RouteSchedule {
 	if pb == nil {
 		return nil
 	}
@@ -46,15 +46,15 @@ func NewRouteSchedule(pb *pbnavitia.RouteSchedule) *gonavitia.RouteSchedule {
 		additionalInfo = &tmp
 	}
 	return &gonavitia.RouteSchedule{
-		DisplayInfo:    NewPtDisplayInfoForRoute(pb.PtDisplayInformations),
-		Table:          NewTable(pb.Table),
+		DisplayInfo:    s.NewPtDisplayInfoForRoute(pb.PtDisplayInformations),
+		Table:          s.NewTable(pb.Table),
 		AdditionalInfo: additionalInfo,
-		GeoJson:        NewGeoJsonMultistring(pb.Geojson),
-		Links:          NewLinksFromUris(pb.PtDisplayInformations),
+		GeoJson:        s.NewGeoJsonMultistring(pb.Geojson),
+		Links:          s.NewLinksFromUris(pb.PtDisplayInformations),
 	}
 }
 
-func NewTable(pb *pbnavitia.Table) *gonavitia.Table {
+func (s *Serializer) NewTable(pb *pbnavitia.Table) *gonavitia.Table {
 	if pb == nil {
 		return nil
 	}
@@ -63,41 +63,41 @@ func NewTable(pb *pbnavitia.Table) *gonavitia.Table {
 		Rows:    make([]gonavitia.Row, 0, len(pb.Rows)),
 	}
 	for _, h := range pb.Headers {
-		t.Headers = append(t.Headers, NewHeader(h))
+		t.Headers = append(t.Headers, s.NewHeader(h))
 	}
 	for _, r := range pb.Rows {
-		t.Rows = append(t.Rows, NewRow(r))
+		t.Rows = append(t.Rows, s.NewRow(r))
 	}
 	return &t
 }
 
-func NewHeader(pb *pbnavitia.Header) *gonavitia.Header {
+func (s *Serializer) NewHeader(pb *pbnavitia.Header) *gonavitia.Header {
 	if pb == nil {
 		return nil
 	}
 	header := gonavitia.Header{
-		DisplayInfo:     NewPtDisplayInfoForVJ(pb.PtDisplayInformations),
-		Links:           NewLinksFromUris(pb.PtDisplayInformations),
-		AdditionalInfos: NewAdditionalInformations(pb.AdditionalInformations),
+		DisplayInfo:     s.NewPtDisplayInfoForVJ(pb.PtDisplayInformations),
+		Links:           s.NewLinksFromUris(pb.PtDisplayInformations),
+		AdditionalInfos: s.NewAdditionalInformations(pb.AdditionalInformations),
 	}
 	return &header
 }
 
-func NewRow(pb *pbnavitia.RouteScheduleRow) gonavitia.Row {
+func (s *Serializer) NewRow(pb *pbnavitia.RouteScheduleRow) gonavitia.Row {
 	if pb == nil {
 		return gonavitia.Row{}
 	}
 	r := gonavitia.Row{
-		StopPoint: NewStopPoint(pb.StopPoint),
+		StopPoint: s.NewStopPoint(pb.StopPoint),
 		DateTimes: make([]gonavitia.DateTime, 0, len(pb.DateTimes)),
 	}
 	for _, d := range pb.DateTimes {
-		r.DateTimes = append(r.DateTimes, NewDatetime(d))
+		r.DateTimes = append(r.DateTimes, s.NewDatetime(d))
 	}
 	return r
 }
 
-func NewDatetime(pb *pbnavitia.ScheduleStopTime) gonavitia.DateTime {
+func (s *Serializer) NewDatetime(pb *pbnavitia.ScheduleStopTime) gonavitia.DateTime {
 	if pb == nil {
 		return gonavitia.DateTime{}
 	}
@@ -110,17 +110,17 @@ func NewDatetime(pb *pbnavitia.ScheduleStopTime) gonavitia.DateTime {
 	}
 
 	rtLevel := strings.ToLower(pb.GetRealtimeLevel().Enum().String())
-	baseDateTime := gonavitia.NavitiaDatetime(time.Unix(int64(pb.GetBaseDateTime()), 0))
+	baseDateTime := s.NewNavitiaDatetime(int64(pb.GetBaseDateTime()))
 	return gonavitia.DateTime{
-		DateTime:       gonavitia.NavitiaDatetime(time.Unix(int64(pb.GetDate()+pb.GetTime()), 0)),
+		DateTime:       s.NewNavitiaDatetime(int64(pb.GetDate() + pb.GetTime())),
 		BaseDateTime:   &baseDateTime,
 		AdditionalInfo: make([]string, 0),
 		DataFreshness:  &rtLevel,
-		Links:          NewLinksFromProperties(pb.Properties),
+		Links:          s.NewLinksFromProperties(pb.Properties),
 	}
 }
 
-func NewLinksFromProperties(pb *pbnavitia.Properties) []gonavitia.Link {
+func (s *Serializer) NewLinksFromProperties(pb *pbnavitia.Properties) []gonavitia.Link {
 	result := make([]gonavitia.Link, 0, 1)
 	if pb == nil {
 		return result

@@ -3,7 +3,7 @@ package serializer
 import "github.com/CanalTP/gonavitia"
 import "github.com/CanalTP/gonavitia/pbnavitia"
 
-func NewGeoJson(pb *pbnavitia.Section) *gonavitia.GeoJson {
+func (s *Serializer) NewGeoJson(pb *pbnavitia.Section) *gonavitia.GeoJson {
 	if pb == nil {
 		return nil
 	}
@@ -21,7 +21,7 @@ func NewGeoJson(pb *pbnavitia.Section) *gonavitia.GeoJson {
 	return &g
 }
 
-func NewGeoJsonMultistring(pb *pbnavitia.MultiLineString) *gonavitia.GeoJsonMultilineString {
+func (s *Serializer) NewGeoJsonMultistring(pb *pbnavitia.MultiLineString) *gonavitia.GeoJsonMultilineString {
 	if pb == nil {
 		return nil
 	}
