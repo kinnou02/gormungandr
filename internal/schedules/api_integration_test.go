@@ -62,7 +62,7 @@ func TestRouteSchedules(t *testing.T) {
 	c, engine := gin.CreateTestContext(httptest.NewRecorder())
 	SetupApi(engine, departureBoardTest, &NullPublisher{}, SkipAuth())
 
-	c.Request = httptest.NewRequest("GET", "/v1/coverage/foo/routes/line:A:0/route_schedules?from_datetime=20120615T080000", nil)
+	c.Request = httptest.NewRequest("GET", "http://api.navitia.io/v1/coverage/foo/routes/line:A:0/route_schedules?from_datetime=20120615T080000", nil)
 	w := httptest.NewRecorder()
 	engine.ServeHTTP(w, c.Request)
 	require.Equal(200, w.Code)
@@ -75,6 +75,17 @@ func TestRouteSchedules(t *testing.T) {
 	require.NotNil(response.Context)
 	assert.Equal("UTC", response.Context.Timezone)
 	schedules := response.RouteSchedules[0]
+
+	links := make(map[string]string)
+	for _, l := range response.Links {
+		links[*l.Type] = *l.Href
+	}
+	//check that the base URL is valid
+	require.Contains(links, "first")
+	require.Contains(links, "last")
+	assert.Contains(links["first"], "http://api.navitia.io/")
+	assert.Contains(links["last"], "http://api.navitia.io/")
+
 	checker.IsValidRouteSchedule(t, schedules)
 
 	scheduleLinks := make(map[string]string)

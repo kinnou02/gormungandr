@@ -29,12 +29,13 @@ func SkipAuth() AuthOption {
 }
 
 func SetupApi(router *gin.Engine, kraken *gormungandr.Kraken, statPublisher Publisher, auth AuthOption) {
-	cov := router.Group("/v1/coverage/:coverage")
-	auth(cov)
-	cov.GET("/*filter", NoRouteHandler(kraken, statPublisher))
-
+	// middleware must be define before handlers
 	router.Use(location.New(location.Config{
 		Scheme: "http",
 		Host:   "navitia.io",
 	}))
+
+	cov := router.Group("/v1/coverage/:coverage")
+	auth(cov)
+	cov.GET("/*filter", NoRouteHandler(kraken, statPublisher))
 }
