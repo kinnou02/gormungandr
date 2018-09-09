@@ -406,15 +406,15 @@
   revision = "780932d4fbbe0e69b84c34c20f5c8d0981e109ea"
 
 [[projects]]
-  digest = "1:6681e9ce9a7247a1c221165342e62a02e531fe8d8140f6b4ae7674af5a4f60fa"
+  digest = "1:9c503b940e8ed53089884e7075f98a3de403e7a72313eb81262b0c11b0026513"
   name = "github.com/rafaeljesus/rabbus"
   packages = [
     ".",
     "internal/amqp",
   ]
   pruneopts = "UT"
-  revision = "9b66eef60b25c85d04183a062ac6ba8816157706"
-  version = "v.2.2"
+  revision = "f0fbeaa2171274f03ddda6bd13b9a9c79d4863ba"
+  version = "v.2.2.1"
 
 [[projects]]
   branch = "master"
