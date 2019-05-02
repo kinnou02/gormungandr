@@ -53,7 +53,7 @@ func RouteSchedule(c *gin.Context, kraken *gormungandr.Kraken, request *RouteSch
 	resp, err := kraken.Call(pbReq)
 	logger.Debug("calling kraken")
 	if err != nil {
-		logger.Errorf("Error while calling kraken: %+v\n", err)
+		logger.Errorf("error while calling kraken: %+v\n", err)
 		c.JSON(http.StatusServiceUnavailable, gin.H{"error": err})
 		return
 	}

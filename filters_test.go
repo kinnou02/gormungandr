@@ -15,7 +15,7 @@ func TestParsePathNil(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
-func testConvertToFilter(t *testing.T) {
+func TestConvertToFilter(t *testing.T) {
 	_, err := convertToFilter("", "")
 	assert.NotNil(t, err)
 
