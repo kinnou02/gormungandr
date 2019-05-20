@@ -110,7 +110,7 @@ func TestRouteSchedules(t *testing.T) {
 	for _, l := range headerByHeadsign["all"].Links {
 		headerLinks[*l.Type] = *l.Id
 	}
-	assert.Equal("all", headerLinks["vehicle_journey"])
+	assert.Equal("vehicle_journey:all", headerLinks["vehicle_journey"])
 	assert.Equal("physical_mode:0", headerLinks["physical_mode"])
 
 	//TODO tests on notes when implemented
