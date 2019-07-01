@@ -11,6 +11,7 @@ services:
 script:
 - sudo apt update && sudo apt install libzmq3-dev
 - docker pull navitia/mock-kraken:dev
+- export GO111MODULE=on
 - make setup
 - make linter-install
 - make ci

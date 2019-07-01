@@ -1,5 +1,6 @@
 FROM ubuntu:16.04 as builder
 RUN apt update && apt install -y libzmq3-dev gcc git make wget pkg-config
+ENV GO111MODULE on
 ENV GOVERSION 1.12
 RUN wget https://dl.google.com/go/go$GOVERSION.linux-amd64.tar.gz && tar -C /usr/local -xzf go$GOVERSION.linux-amd64.tar.gz
 WORKDIR /root/go/src/github.com/CanalTP/gormungandr
