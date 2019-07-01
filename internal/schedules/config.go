@@ -30,7 +30,7 @@ func init() {
 	pflag.Duration("auth-cache-timeout", 0, "timeout for cache on authentication calls to db")
 }
 
-// malighed is desactived for this struct readability is more important than size
+// maligned is deactivated for this struct, readability is more important than size
 type Config struct { //nolint:maligned
 	Listen                  string
 	Timeout                 time.Duration
