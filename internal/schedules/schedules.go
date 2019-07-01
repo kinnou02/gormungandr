@@ -20,13 +20,13 @@ import (
 
 type RouteScheduleRequest struct {
 	FromDatetime     time.Time `form:"from_datetime" time_format:"20060102T150405"`
+	ForbiddenUris    []string  //mapping with Binding doesn't work
+	CurrentDatetime  time.Time `form:"_current_datetime" time_format:"20060102T150405"`
 	DisableGeojson   bool      `form:"disable_geojson"`
 	StartPage        int32     `form:"start_page"`
 	Count            int32     `form:"count"`
 	Duration         int32     `form:"duration"`
-	ForbiddenUris    []string  //mapping with Binding doesn't work
 	Depth            int32     `form:"depth"`
-	CurrentDatetime  time.Time `form:"_current_datetime" time_format:"20060102T150405"`
 	ItemsPerSchedule int32     `form:"items_per_schedule"`
 	DataFreshness    string    `form:"data_freshness"`
 	Filters          []string

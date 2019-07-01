@@ -43,13 +43,14 @@ func init() {
 
 func newMockRabbus(
 	sizeAsync, sizeErr, sizeOk int,
-	expectAsync, expectOk, expectErr bool,
+	expectOk, expectErr bool,
 ) (
 	mock *mockRabbus,
 	emitAsync chan rabbus.Message,
 	emitErr chan error,
 	emitOK chan struct{},
 ) {
+	expectAsync := true
 	mock = new(mockRabbus)
 	emitAsync = make(chan rabbus.Message, sizeAsync)
 	emitErr = make(chan error, sizeErr)
@@ -75,7 +76,7 @@ func TestPublishForRouteSchedulesNil(t *testing.T) {
 	)
 	ginContext, _ := gin.CreateTestContext(httptest.NewRecorder())
 	ginContext.Request = httptest.NewRequest("Get", "/", nil)
-	assert.NotPanics(t, func() { statPublisher.PublishRouteSchedule(request, response, *ginContext) })
+	assert.NotPanics(t, func() { assert.Nil(t, statPublisher.PublishRouteSchedule(request, response, *ginContext)) })
 }
 
 func TestPublishForRouteSchedulesOk(t *testing.T) {
@@ -86,11 +87,13 @@ func TestPublishForRouteSchedulesOk(t *testing.T) {
 	)
 	ginContext, _ := gin.CreateTestContext(httptest.NewRecorder())
 	ginContext.Request = httptest.NewRequest("Get", "/", nil)
-	mock, emitAsync, emitErr, emitOK := newMockRabbus(1, 1, 1, true, true, true)
+	mock, emitAsync, emitErr, emitOK := newMockRabbus(1, 1, 1, true, true)
 	statPublisher := NewStatPublisher(mock, "test", 10*time.Millisecond)
 
 	emitOK <- struct{}{}
-	go statPublisher.PublishRouteSchedule(request, response, *ginContext)
+	go func() {
+		assert.Nil(t, statPublisher.PublishRouteSchedule(request, response, *ginContext))
+	}()
 	select {
 	case m := <-emitAsync:
 		assert.NotNil(t, m)
@@ -111,11 +114,13 @@ func TestPublishForRouteSchedulesErr(t *testing.T) {
 	)
 	ginContext, _ := gin.CreateTestContext(httptest.NewRecorder())
 	ginContext.Request = httptest.NewRequest("Get", "/", nil)
-	mock, emitAsync, emitErr, emitOK := newMockRabbus(1, 1, 1, true, true, true)
+	mock, emitAsync, emitErr, emitOK := newMockRabbus(1, 1, 1, true, true)
 	statPublisher := NewStatPublisher(mock, "test", 10*time.Millisecond)
 
 	emitErr <- fmt.Errorf("error")
-	go statPublisher.PublishRouteSchedule(request, response, *ginContext)
+	go func() {
+		assert.NotNil(t, statPublisher.PublishRouteSchedule(request, response, *ginContext))
+	}()
 	select {
 	case m := <-emitAsync:
 		assert.NotNil(t, m)
@@ -131,7 +136,7 @@ func TestPublishForRouteSchedulesErr(t *testing.T) {
 func TestPublishOK(t *testing.T) {
 	t.Parallel()
 	var pb pbnavitia.StatRequest
-	mock, emitAsync, emitErr, emitOK := newMockRabbus(1, 1, 1, true, true, true)
+	mock, emitAsync, emitErr, emitOK := newMockRabbus(1, 1, 1, true, true)
 	statPublisher := NewStatPublisher(mock, "test", time.Millisecond)
 
 	emitOK <- struct{}{}
@@ -149,7 +154,7 @@ func TestPublishOK(t *testing.T) {
 func TestPublishErr(t *testing.T) {
 	t.Parallel()
 	var pb pbnavitia.StatRequest
-	mock, emitAsync, emitErr, emitOK := newMockRabbus(1, 1, 1, true, true, true)
+	mock, emitAsync, emitErr, emitOK := newMockRabbus(1, 1, 1, true, true)
 	statPublisher := NewStatPublisher(mock, "test", time.Millisecond)
 
 	emitErr <- fmt.Errorf("error")
@@ -178,7 +183,7 @@ func TestPublishErr(t *testing.T) {
 func TestTimeoutSend(t *testing.T) {
 	t.Parallel()
 	var pb pbnavitia.StatRequest
-	mock, emitAsync, _, _ := newMockRabbus(0, 0, 0, true, false, false)
+	mock, emitAsync, _, _ := newMockRabbus(0, 0, 0, false, false)
 	statPublisher := NewStatPublisher(mock, "test", time.Millisecond)
 	assert.Error(t, statPublisher.publish(pb))
 	select {
