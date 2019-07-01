@@ -5,7 +5,7 @@ setup: ## Install all the build and lint dependencies
 	go get -u golang.org/x/tools/cmd/cover
 
 linter-install: ## Install linter
-	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $(shell go env GOPATH)/bin v1.11.2
+	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $(shell go env GOPATH)/bin v1.17.1
 
 .PHONY: test
 test: ## Run all the tests

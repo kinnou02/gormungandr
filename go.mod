@@ -56,10 +56,11 @@ require (
 	github.com/stretchr/objx v0.1.0
 	github.com/stretchr/testify v1.2.1
 	github.com/ugorji/go v0.0.0-20180112141927-9831f2c3ac10
-	golang.org/x/crypto v0.0.0-20180502121236-2c241ca3045d
-	golang.org/x/net v0.0.0-20180406214816-61147c48b25b
-	golang.org/x/sys v0.0.0-20180302081741-dd2ff4accc09
+	golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2
+	golang.org/x/net v0.0.0-20190620200207-3b0461eec859
+	golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a
 	golang.org/x/text v0.3.0
+	golang.org/x/tools v0.0.0-20190628222527-fb37f6ba8261 // indirect
 	gopkg.in/DATA-DOG/go-sqlmock.v1 v1.3.0
 	gopkg.in/go-playground/validator.v8 v8.18.2
 	gopkg.in/yaml.v2 v2.2.1
