@@ -1,4 +1,4 @@
-package gormungandr
+package kraken
 
 import (
 	"fmt"
@@ -12,32 +12,18 @@ import (
 	"github.com/sony/gobreaker"
 )
 
-type KrakenTimeout struct {
-	message string
-}
-
-func NewKrakenTimeout(message string) *KrakenTimeout {
-	return &KrakenTimeout{
-		message: message,
-	}
-}
-
-func (e *KrakenTimeout) Error() string {
-	return e.message
-}
-
-type Kraken struct {
+type KrakenZMQ struct {
 	Name    string
 	Addr    string
 	Timeout time.Duration
 
 	cb         *gobreaker.CircuitBreaker
-	observer   KrakenObserver
+	observer   krakenObserver
 	socketPool *pool
 }
 
-func NewKraken(name, addr string, timeout time.Duration) *Kraken {
-	kraken := &Kraken{
+func NewKrakenZMQ(name, addr string, timeout time.Duration) Kraken {
+	kraken := &KrakenZMQ{
 		Name:       name,
 		Timeout:    timeout,
 		Addr:       addr,
@@ -49,7 +35,7 @@ func NewKraken(name, addr string, timeout time.Duration) *Kraken {
 	return kraken
 }
 
-func (k *Kraken) call(request []byte) ([]byte, error) {
+func (k *KrakenZMQ) call(request []byte) ([]byte, error) {
 	var err error
 	var requester *zmq.Socket
 	requester, err = k.socketPool.Borrow()
@@ -80,13 +66,13 @@ func (k *Kraken) call(request []byte) ([]byte, error) {
 	return rawResp, nil
 }
 
-func (k *Kraken) Call(request *pbnavitia.Request) (*pbnavitia.Response, error) {
+func (k *KrakenZMQ) Call(request *pbnavitia.Request) (*pbnavitia.Response, error) {
 	data, err := proto.Marshal(request)
 	if err != nil {
 		return nil, errors.Wrap(err, "error while marshalling")
 	}
 	rawResponse, err := k.cb.Execute(func() (interface{}, error) {
-		o := k.observer.StartRequest(k, request.RequestedApi.String())
+		o := k.observer.StartRequest(request.RequestedApi.String())
 		defer o.Finish()
 		return k.call(data)
 	})

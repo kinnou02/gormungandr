@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/CanalTP/gormungandr"
+	"github.com/CanalTP/gormungandr/kraken"
 	"github.com/ory/dockertest"
 	"github.com/ory/dockertest/docker"
 )
@@ -50,15 +50,15 @@ func (m *MockManager) Close() error {
 	return nil
 }
 
-func (m *MockManager) DepartureBoardTest() (*gormungandr.Kraken, error) {
+func (m *MockManager) DepartureBoardTest() (kraken.Kraken, error) {
 	return m.startKraken("departure_board_test")
 }
 
-func (m *MockManager) MainRoutingTest() (*gormungandr.Kraken, error) {
+func (m *MockManager) MainRoutingTest() (kraken.Kraken, error) {
 	return m.startKraken("main_routing_test")
 }
 
-func (m *MockManager) startKraken(binary string) (*gormungandr.Kraken, error) {
+func (m *MockManager) startKraken(binary string) (kraken.Kraken, error) {
 	if !m.Pulled {
 		if err := m.pool.Client.PullImage(docker.PullImageOptions{
 			Repository:   "navitia/mock-kraken",
@@ -95,5 +95,5 @@ func (m *MockManager) startKraken(binary string) (*gormungandr.Kraken, error) {
 	}); err != nil {
 		return nil, err
 	}
-	return gormungandr.NewKraken(binary, fmt.Sprint("tcp://", conStr), 1*time.Second), nil
+	return kraken.NewKrakenZMQ(binary, fmt.Sprint("tcp://", conStr), 1*time.Second), nil
 }

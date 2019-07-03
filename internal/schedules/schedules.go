@@ -10,6 +10,7 @@ import (
 	"github.com/CanalTP/gonavitia"
 	"github.com/CanalTP/gonavitia/pbnavitia"
 	"github.com/CanalTP/gormungandr"
+	"github.com/CanalTP/gormungandr/kraken"
 	"github.com/CanalTP/gormungandr/serializer"
 	"github.com/gin-contrib/location"
 	"github.com/gin-gonic/gin"
@@ -48,7 +49,7 @@ func NewRouteScheduleRequest() RouteScheduleRequest {
 	}
 }
 
-func RouteSchedule(c *gin.Context, kraken *gormungandr.Kraken, request *RouteScheduleRequest, publisher Publisher, logger *logrus.Entry) {
+func RouteSchedule(c *gin.Context, kraken kraken.Kraken, request *RouteScheduleRequest, publisher Publisher, logger *logrus.Entry) {
 	pbReq := BuildRequestRouteSchedule(*request)
 	resp, err := kraken.Call(pbReq)
 	logger.Debug("calling kraken")

@@ -2,7 +2,7 @@ package schedules
 
 import (
 	"github.com/CanalTP/gonavitia"
-	"github.com/CanalTP/gormungandr"
+	"github.com/CanalTP/gormungandr/kraken"
 	"github.com/gin-contrib/location"
 	"github.com/gin-gonic/gin"
 )
@@ -28,7 +28,7 @@ func SkipAuth() AuthOption {
 	return func(group *gin.RouterGroup) {}
 }
 
-func SetupApi(router *gin.Engine, kraken *gormungandr.Kraken, statPublisher Publisher, auth AuthOption) {
+func SetupApi(router *gin.Engine, kraken kraken.Kraken, statPublisher Publisher, auth AuthOption) {
 	// middleware must be define before handlers
 	router.Use(location.New(location.Config{
 		Scheme: "http",
