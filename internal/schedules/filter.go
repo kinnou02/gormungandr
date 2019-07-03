@@ -5,7 +5,7 @@ import (
 
 	"github.com/CanalTP/gormungandr"
 	"github.com/gin-gonic/gin"
-	"github.com/satori/go.uuid"
+	uuid "github.com/satori/go.uuid"
 	"github.com/sirupsen/logrus"
 )
 

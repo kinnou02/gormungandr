@@ -2,15 +2,10 @@ VERSION := $(shell git describe --tag --always --dirty)
 
 .PHONY: setup
 setup: ## Install all the build and lint dependencies
-	go get -u github.com/alecthomas/gometalinter
 	go get -u golang.org/x/tools/cmd/cover
-	go get -u github.com/golang/dep/cmd/dep
-	gometalinter --install --update
-	@$(MAKE) dep
 
-.PHONY: dep
-dep: ## Run dep ensure and prune
-	dep ensure
+linter-install: ## Install linter
+	curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $(shell go env GOPATH)/bin v1.17.1
 
 .PHONY: test
 test: ## Run all the tests
@@ -30,20 +25,7 @@ fmt: ## Run goimports on all go files
 
 .PHONY: lint
 lint: ## Run all the linters
-	gometalinter --vendor --disable-all \
-		--enable=deadcode \
-		--enable=ineffassign \
-		--enable=staticcheck \
-		--enable=gofmt \
-		--enable=goimports \
-		--enable=misspell \
-		--enable=errcheck \
-		--enable=vet \
-		--enable=vetshadow \
-		--deadline=10m \
-		--exclude pbnavitia \
-		./...
-#--enable=golint \
+	golangci-lint run -E gosec -E maligned -E misspell -E prealloc -E goimports -E unparam -E nakedret
 
 .PHONY: ci
 ci: lint test ## Run all the tests and code checks
