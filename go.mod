@@ -62,6 +62,8 @@ require (
 	golang.org/x/text v0.3.0
 	golang.org/x/tools v0.0.0-20190628222527-fb37f6ba8261 // indirect
 	gopkg.in/DATA-DOG/go-sqlmock.v1 v1.3.0
+	gopkg.in/airbrake/gobrake.v2 v2.0.9 // indirect
+	gopkg.in/gemnasium/logrus-airbrake-hook.v2 v2.1.2 // indirect
 	gopkg.in/go-playground/validator.v8 v8.18.2
 	gopkg.in/yaml.v2 v2.2.1
 )

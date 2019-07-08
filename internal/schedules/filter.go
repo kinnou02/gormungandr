@@ -4,12 +4,13 @@ import (
 	"net/http"
 
 	"github.com/CanalTP/gormungandr"
+	"github.com/CanalTP/gormungandr/kraken"
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
 	"github.com/sirupsen/logrus"
 )
 
-func NoRouteHandler(kraken *gormungandr.Kraken, publisher Publisher) gin.HandlerFunc {
+func NoRouteHandler(kraken kraken.Kraken, publisher Publisher) gin.HandlerFunc {
 	fn := func(c *gin.Context) {
 		request_id := uuid.NewV4()
 		logger := logrus.WithField("request_id", request_id)

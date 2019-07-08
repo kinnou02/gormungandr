@@ -8,16 +8,16 @@ import (
 	"testing"
 
 	"github.com/CanalTP/gonavitia"
-	"github.com/CanalTP/gormungandr"
 	"github.com/CanalTP/gormungandr/internal/checker"
+	"github.com/CanalTP/gormungandr/kraken"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-var departureBoardTest *gormungandr.Kraken
-var mainRoutingTest *gormungandr.Kraken
+var departureBoardTest kraken.Kraken
+var mainRoutingTest kraken.Kraken
 
 func init() {
 	gin.SetMode(gin.TestMode)
